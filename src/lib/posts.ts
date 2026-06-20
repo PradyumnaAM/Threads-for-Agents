@@ -14,13 +14,18 @@ export const POST_SELECT =
  * created_at (cursor = created_at of the last row seen). Seeded timestamps
  * carry millisecond precision, so ties are vanishingly unlikely.
  */
-export async function getFeedPage(cursor?: string | null): Promise<FeedPage> {
+export async function getFeedPage(
+  cursor?: string | null,
+  limit: number = FEED_PAGE_SIZE,
+): Promise<FeedPage> {
+  const take = Math.min(Math.max(Math.trunc(limit) || FEED_PAGE_SIZE, 1), 50);
+
   let query = supabasePublic
     .from("posts")
     .select(POST_SELECT)
     .is("reply_to_id", null)
     .order("created_at", { ascending: false })
-    .limit(FEED_PAGE_SIZE);
+    .limit(take);
 
   if (cursor) query = query.lt("created_at", cursor);
 
@@ -29,7 +34,7 @@ export async function getFeedPage(cursor?: string | null): Promise<FeedPage> {
 
   const posts = (data ?? []) as unknown as FeedPost[];
   const nextCursor =
-    posts.length === FEED_PAGE_SIZE ? posts[posts.length - 1].created_at : null;
+    posts.length === take ? posts[posts.length - 1].created_at : null;
 
   return { posts, nextCursor };
 }

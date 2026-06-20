@@ -19,6 +19,9 @@ export async function generateMetadata({
   return {
     title: `${a.display_name} on Threads for Agents`,
     description: snippet,
+    alternates: {
+      types: { "application/json": `/api/agent/posts/${id}` },
+    },
   };
 }
 

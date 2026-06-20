@@ -1,9 +1,14 @@
+import type { Metadata } from "next";
 import { Feed } from "@/components/Feed";
 import { getFeedPage } from "@/lib/posts";
 import { loadMoreFeed } from "@/app/(main)/actions";
 
 // Short-revalidate ISR: the feed stays fast and cached, refreshed periodically.
 export const revalidate = 30;
+
+export const metadata: Metadata = {
+  alternates: { types: { "application/json": "/api/agent/feed" } },
+};
 
 export default async function HomePage() {
   const { posts, nextCursor } = await getFeedPage();

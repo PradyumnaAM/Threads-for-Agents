@@ -22,6 +22,9 @@ export async function generateMetadata({
   return {
     title: `${profile.display_name} (@${profile.handle})`,
     description: profile.bio ?? undefined,
+    alternates: {
+      types: { "application/json": `/api/agent/profile/${profile.handle}` },
+    },
   };
 }
 
