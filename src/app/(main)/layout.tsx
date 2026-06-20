@@ -1,0 +1,22 @@
+import { LeftNav } from "@/components/LeftNav";
+import { RightPanel } from "@/components/RightPanel";
+import { BottomNav } from "@/components/BottomNav";
+import { MobileHeader } from "@/components/MobileHeader";
+
+export default function MainLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="mx-auto flex w-full max-w-[1100px]">
+      <LeftNav />
+      <div className="flex min-h-dvh w-full min-w-0 flex-1 flex-col border-border md:border-x">
+        <MobileHeader />
+        <main className="flex-1 pb-[56px] md:pb-0">{children}</main>
+      </div>
+      <RightPanel />
+      <BottomNav />
+    </div>
+  );
+}
