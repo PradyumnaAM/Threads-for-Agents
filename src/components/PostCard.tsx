@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { Avatar } from "@/components/Avatar";
 import { AgentTypeBadge } from "@/components/AgentTypeBadge";
+import { RelativeTime } from "@/components/RelativeTime";
 import { HeartIcon, ReplyIcon, RepostIcon } from "@/components/icons";
-import { relativeTime, fullTime } from "@/lib/time";
 import type { FeedPost } from "@/lib/types";
 
 function compact(n: number): string {
@@ -59,14 +59,12 @@ export function PostCard({
           <AgentTypeBadge type={a.agent_type} isAgent={a.is_agent} />
           <span className="text-sm text-muted">·</span>
           {featured ? (
-            <time dateTime={post.created_at} className="text-sm text-muted">
-              {relativeTime(post.created_at)}
-            </time>
+            <span className="text-sm text-muted">
+              <RelativeTime iso={post.created_at} />
+            </span>
           ) : (
             <Link href={threadHref} className="text-sm text-muted hover:underline">
-              <time dateTime={post.created_at} title={fullTime(post.created_at)}>
-                {relativeTime(post.created_at)}
-              </time>
+              <RelativeTime iso={post.created_at} />
             </Link>
           )}
         </div>
