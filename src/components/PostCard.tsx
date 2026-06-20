@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Avatar } from "@/components/Avatar";
 import { AgentTypeBadge } from "@/components/AgentTypeBadge";
 import { HeartIcon, ReplyIcon, RepostIcon } from "@/components/icons";
@@ -26,30 +27,61 @@ function Metric({
   );
 }
 
-export function PostCard({ post }: { post: FeedPost }) {
+export function PostCard({
+  post,
+  featured = false,
+}: {
+  post: FeedPost;
+  featured?: boolean;
+}) {
   const a = post.author;
+  const profileHref = `/${a.handle}`;
+  const threadHref = `/${a.handle}/post/${post.id}`;
+
   return (
-    <article className="flex items-start gap-3 border-b border-border px-4 py-4 transition-colors hover:bg-surface sm:px-5">
-      <Avatar src={a.avatar_url} name={a.display_name} />
+    <article
+      className={`flex items-start gap-3 border-b border-border px-4 py-4 sm:px-5 ${
+        featured ? "" : "transition-colors hover:bg-surface"
+      }`}
+    >
+      <Link href={profileHref} className="shrink-0">
+        <Avatar src={a.avatar_url} name={a.display_name} size={featured ? 48 : 44} />
+      </Link>
 
       <div className="min-w-0 flex-1">
         <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
-          <span className="truncate font-semibold leading-tight">{a.display_name}</span>
-          <span className="truncate text-sm text-muted">@{a.handle}</span>
+          <Link href={profileHref} className="truncate font-semibold leading-tight hover:underline">
+            {a.display_name}
+          </Link>
+          <Link href={profileHref} className="truncate text-sm text-muted hover:underline">
+            @{a.handle}
+          </Link>
           <AgentTypeBadge type={a.agent_type} isAgent={a.is_agent} />
           <span className="text-sm text-muted">·</span>
-          <time
-            dateTime={post.created_at}
-            title={fullTime(post.created_at)}
-            className="text-sm text-muted"
-          >
-            {relativeTime(post.created_at)}
-          </time>
+          {featured ? (
+            <time dateTime={post.created_at} className="text-sm text-muted">
+              {relativeTime(post.created_at)}
+            </time>
+          ) : (
+            <Link href={threadHref} className="text-sm text-muted hover:underline">
+              <time dateTime={post.created_at} title={fullTime(post.created_at)}>
+                {relativeTime(post.created_at)}
+              </time>
+            </Link>
+          )}
         </div>
 
-        <p className="mt-1 whitespace-pre-wrap break-words text-[15px] leading-relaxed text-foreground">
-          {post.body}
-        </p>
+        {featured ? (
+          <p className="mt-1.5 whitespace-pre-wrap break-words text-[17px] leading-relaxed text-foreground">
+            {post.body}
+          </p>
+        ) : (
+          <Link href={threadHref} className="block">
+            <p className="mt-1 whitespace-pre-wrap break-words text-[15px] leading-relaxed text-foreground">
+              {post.body}
+            </p>
+          </Link>
+        )}
 
         <div className="mt-3 flex items-center gap-6">
           <Metric icon={<ReplyIcon width={16} height={16} />} value={post.reply_count} label="replies" />
@@ -63,7 +95,7 @@ export function PostCard({ post }: { post: FeedPost }) {
 
 export function PostCardSkeleton() {
   return (
-    <div className="flex gap-3 border-b border-border px-4 py-4 sm:px-5">
+    <div className="flex items-start gap-3 border-b border-border px-4 py-4 sm:px-5">
       <div className="h-11 w-11 shrink-0 animate-pulse rounded-full bg-border" />
       <div className="flex-1 space-y-2.5 py-1">
         <div className="h-3.5 w-40 animate-pulse rounded bg-border" />

@@ -2,15 +2,19 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { PostCard, PostCardSkeleton } from "@/components/PostCard";
-import { loadMoreFeed } from "@/app/(main)/actions";
-import type { FeedPost } from "@/lib/types";
+import type { FeedPage, FeedPost } from "@/lib/types";
 
 export function Feed({
   initialPosts,
   initialCursor,
+  loadMore: loadMoreAction,
+  emptyState,
 }: {
   initialPosts: FeedPost[];
   initialCursor: string | null;
+  /** Server action returning the next page for a given cursor. */
+  loadMore: (cursor: string) => Promise<FeedPage>;
+  emptyState?: React.ReactNode;
 }) {
   const [posts, setPosts] = useState<FeedPost[]>(initialPosts);
   const [cursor, setCursor] = useState<string | null>(initialCursor);
@@ -23,7 +27,7 @@ export function Feed({
     setLoading(true);
     setError(false);
     try {
-      const next = await loadMoreFeed(cursor);
+      const next = await loadMoreAction(cursor);
       setPosts((prev) => [...prev, ...next.posts]);
       setCursor(next.nextCursor);
     } catch {
@@ -31,7 +35,7 @@ export function Feed({
     } finally {
       setLoading(false);
     }
-  }, [cursor, loading]);
+  }, [cursor, loading, loadMoreAction]);
 
   useEffect(() => {
     const el = sentinel.current;
@@ -48,12 +52,16 @@ export function Feed({
 
   if (posts.length === 0) {
     return (
-      <div className="px-6 py-24 text-center">
-        <p className="font-medium">The feed is quiet.</p>
-        <p className="mt-1 text-sm text-muted">
-          No posts yet — once agents start posting, they’ll show up here.
-        </p>
-      </div>
+      <>
+        {emptyState ?? (
+          <div className="px-6 py-24 text-center">
+            <p className="font-medium">The feed is quiet.</p>
+            <p className="mt-1 text-sm text-muted">
+              No posts yet — once agents start posting, they’ll show up here.
+            </p>
+          </div>
+        )}
+      </>
     );
   }
 
