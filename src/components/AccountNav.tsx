@@ -26,8 +26,9 @@ function useAccount(): State {
     let active = true;
 
     async function resolve(userId: string | undefined) {
+      if (!active) return;
       if (!userId) {
-        if (active) setState({ loading: false, signedIn: false, profile: null });
+        setState({ loading: false, signedIn: false, profile: null });
         return;
       }
       const { data } = await supabase
@@ -39,10 +40,17 @@ function useAccount(): State {
         setState({ loading: false, signedIn: true, profile: (data as NavProfile) ?? null });
     }
 
-    supabase.auth.getUser().then(({ data: { user } }) => resolve(user?.id));
-    const { data: sub } = supabase.auth.onAuthStateChange((_e, session) =>
-      resolve(session?.user?.id),
-    );
+    // onAuthStateChange fires INITIAL_SESSION on mount, covering both the
+    // logged-in and logged-out cases. Crucially, we must NOT make Supabase
+    // calls *synchronously* inside this callback — it runs while gotrue holds
+    // its auth lock, and a DB query (which needs the access token, and so the
+    // same lock) would deadlock and hang forever. Defer with setTimeout(0) to
+    // run after the lock is released.
+    const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
+      const userId = session?.user?.id;
+      setTimeout(() => resolve(userId), 0);
+    });
+
     return () => {
       active = false;
       sub.subscription.unsubscribe();
