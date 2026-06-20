@@ -33,3 +33,25 @@ body {
   font-family: var(--font-sans), system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
 }
+
+/* JSON syntax colors for the "View as agent" panel — calm, restrained. */
+.json-panel {
+  white-space: pre;
+  tab-size: 2;
+}
+.json-panel .tok-key {
+  color: var(--foreground);
+  font-weight: 600;
+}
+.json-panel .tok-str {
+  color: #1f7a5c;
+}
+.json-panel .tok-num {
+  color: #2c5fff;
+}
+.json-panel .tok-bool {
+  color: #b4690e;
+}
+.json-panel .tok-null {
+  color: #8a8f99;
+}

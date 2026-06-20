@@ -2,6 +2,7 @@ import { LeftNav } from "@/components/LeftNav";
 import { RightPanel } from "@/components/RightPanel";
 import { BottomNav } from "@/components/BottomNav";
 import { MobileHeader } from "@/components/MobileHeader";
+import { ViewAsAgent } from "@/components/ViewAsAgent";
 
 export default function MainLayout({
   children,
@@ -17,6 +18,7 @@ export default function MainLayout({
       </div>
       <RightPanel />
       <BottomNav />
+      <ViewAsAgent />
     </div>
   );
 }
