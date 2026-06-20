@@ -1,10 +1,20 @@
-import { ComingSoon } from "@/components/ComingSoon";
+import { redirect } from "next/navigation";
+import type { Metadata } from "next";
+import { PageHeader } from "@/components/PageHeader";
+import { ComposeForm } from "@/components/ComposeForm";
+import { getCurrentProfile } from "@/lib/auth";
 
-export default function ComposePage() {
+export const metadata: Metadata = { title: "Compose · Threads for Agents" };
+
+export default async function ComposePage() {
+  const { user, profile } = await getCurrentProfile();
+  if (!user) redirect("/login");
+  if (!profile) redirect("/setup");
+
   return (
-    <ComingSoon title="Compose" phase="Phase 7">
-      Posting needs sign-in, which arrives with Google auth in a later phase.
-      For now the feed is read-only.
-    </ComingSoon>
+    <>
+      <PageHeader title="New post" back />
+      <ComposeForm displayName={profile.display_name} avatarUrl={profile.avatar_url} />
+    </>
   );
 }

@@ -8,8 +8,8 @@ import { PageHeader } from "@/components/PageHeader";
 import { getProfileByHandle, getProfileStats } from "@/lib/profiles";
 import { getProfilePostsPage } from "@/lib/posts";
 import { loadMoreProfilePosts } from "@/app/(main)/actions";
-
-export const revalidate = 30;
+import { getCurrentProfile } from "@/lib/auth";
+import { supabasePublic } from "@/lib/supabase/public-client";
 
 export async function generateMetadata({
   params,
@@ -48,10 +48,23 @@ export default async function ProfilePage({
   const profile = await getProfileByHandle(handle);
   if (!profile) notFound();
 
-  const [stats, firstPage] = await Promise.all([
+  const [stats, firstPage, { user: viewer }] = await Promise.all([
     getProfileStats(profile.id),
     getProfilePostsPage(profile.id),
+    getCurrentProfile(),
   ]);
+
+  const isSelf = viewer?.id === profile.id;
+  let isFollowing = false;
+  if (viewer && !isSelf) {
+    const { data } = await supabasePublic
+      .from("follows")
+      .select("follower_id")
+      .eq("follower_id", viewer.id)
+      .eq("followee_id", profile.id)
+      .maybeSingle();
+    isFollowing = !!data;
+  }
 
   const joined = new Date(profile.created_at).toLocaleDateString(undefined, {
     month: "long",
@@ -65,7 +78,18 @@ export default async function ProfilePage({
       <section className="border-b border-border px-4 py-5 sm:px-5">
         <div className="flex items-start justify-between gap-4">
           <Avatar src={profile.avatar_url} name={profile.display_name} size={72} />
-          <FollowButton />
+          {isSelf ? (
+            <span className="rounded-full border border-border px-4 py-1.5 text-sm font-medium text-muted">
+              This is you
+            </span>
+          ) : (
+            <FollowButton
+              followeeId={profile.id}
+              handle={profile.handle}
+              initialFollowing={isFollowing}
+              authed={!!viewer}
+            />
+          )}
         </div>
 
         <div className="mt-3">

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Brand } from "@/components/Brand";
+import { AccountNav } from "@/components/AccountNav";
 import { NAV_ITEMS, isActive } from "@/components/nav-items";
 
 export function LeftNav() {
@@ -35,11 +36,9 @@ export function LeftNav() {
         })}
       </nav>
 
-      <p className="mt-auto px-3 text-xs leading-relaxed text-muted">
-        A social feed for AI agents.
-        <br />
-        Humans welcome to read.
-      </p>
+      <div className="mt-auto">
+        <AccountNav variant="rail" />
+      </div>
     </aside>
   );
 }
