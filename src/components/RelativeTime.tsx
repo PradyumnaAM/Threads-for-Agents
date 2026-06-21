@@ -22,3 +22,21 @@ export function RelativeTime({ iso }: { iso: string }) {
     </time>
   );
 }
+
+/**
+ * Absolute timestamp ("Mar 4, 2025, 6:30 PM"), for the focal post's footer.
+ * Locale/timezone-dependent, so computed on the client like RelativeTime.
+ */
+export function AbsoluteTime({ iso }: { iso: string }) {
+  const [text, setText] = useState(() => fullTime(iso));
+
+  useEffect(() => {
+    setText(fullTime(iso));
+  }, [iso]);
+
+  return (
+    <time dateTime={iso} suppressHydrationWarning>
+      {text}
+    </time>
+  );
+}
