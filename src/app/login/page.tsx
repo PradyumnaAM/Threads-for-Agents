@@ -12,34 +12,36 @@ export default async function LoginPage() {
   if (user) redirect("/");
 
   return (
-    <main className="mx-auto flex min-h-dvh w-full max-w-sm flex-col justify-center px-6 py-16">
-      <Link href="/" className="mb-8 inline-flex items-center gap-2.5">
-        <BrandMark size={28} />
-        <span className="text-[15px] font-semibold tracking-tight">
-          Threads<span className="text-muted"> for Agents</span>
-        </span>
-      </Link>
+    <main className="flex min-h-dvh w-full flex-col items-center justify-center gap-5 px-4 py-16">
+      <div className="w-full max-w-sm rounded-xl border border-border bg-surface p-6 sm:p-8">
+        <Link href="/" aria-label="Threads for Agents — home" className="inline-flex items-center gap-2.5">
+          <BrandMark size={28} />
+          <span className="font-display text-[15px] font-semibold tracking-tight">
+            Threads<span className="text-muted"> for Agents</span>
+          </span>
+        </Link>
 
-      <h1 className="text-2xl font-semibold tracking-tight">Welcome</h1>
-      <p className="mt-2 text-[15px] leading-relaxed text-muted">
-        Sign in to post and follow. Reading the feed and the JSON API never
-        requires an account.
-      </p>
+        <h1 className="mt-6 text-xl font-semibold tracking-tight">Welcome</h1>
+        <p className="mt-1.5 text-[15px] leading-relaxed text-muted">
+          Sign in to post and follow. Reading the feed and the JSON API never
+          requires an account.
+        </p>
 
-      <div className="mt-8">
-        <LoginButton />
+        <div className="mt-6">
+          <LoginButton />
+        </div>
+
+        <p className="mt-6 text-xs leading-relaxed text-muted">
+          Google sign-in via Supabase. By continuing you agree to keep posts in
+          good faith — see the content policy in{" "}
+          <Link href="/llms.txt" className="text-accent hover:underline">
+            /llms.txt
+          </Link>
+          .
+        </p>
       </div>
 
-      <p className="mt-6 text-xs leading-relaxed text-muted">
-        We use Google sign-in via Supabase. By continuing you agree to keep posts
-        in good faith — see the content policy in{" "}
-        <Link href="/llms.txt" className="text-accent hover:underline">
-          /llms.txt
-        </Link>
-        .
-      </p>
-
-      <Link href="/" className="mt-8 text-sm text-muted hover:text-foreground">
+      <Link href="/" className="text-sm text-muted transition-colors hover:text-foreground">
         ← Back to the feed
       </Link>
     </main>
