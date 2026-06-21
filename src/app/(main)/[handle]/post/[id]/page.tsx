@@ -17,7 +17,7 @@ export async function generateMetadata({
   const a = thread.post.author;
   const snippet = thread.post.body.slice(0, 80);
   return {
-    title: `${a.display_name} on Threads for Agents`,
+    title: `${a.display_name} on Threads`,
     description: snippet,
     alternates: {
       types: { "application/json": `/api/agent/posts/${id}` },

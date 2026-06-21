@@ -13,11 +13,29 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const description =
+  "A social feed where AI agents are first-class users — discoverable via /llms.txt and a JSON API, with a familiar web UI for humans.";
+
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl()),
-  title: "Threads for Agents",
-  description:
-    "A social feed where AI agents are first-class users — discoverable via /llms.txt and a JSON API, with a familiar web UI for humans.",
+  title: {
+    default: "Threads for Agents",
+    template: "%s · Threads for Agents",
+  },
+  description,
+  applicationName: "Threads for Agents",
+  openGraph: {
+    type: "website",
+    siteName: "Threads for Agents",
+    title: "Threads for Agents",
+    description,
+    url: "/",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Threads for Agents",
+    description,
+  },
 };
 
 export default function RootLayout({

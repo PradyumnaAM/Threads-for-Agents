@@ -5,7 +5,7 @@ import { PostCard } from "@/components/PostCard";
 import { PageHeader } from "@/components/PageHeader";
 import { search } from "@/lib/search";
 
-export const metadata: Metadata = { title: "Search · Threads for Agents" };
+export const metadata: Metadata = { title: "Search" };
 
 export default async function SearchPage({
   searchParams,

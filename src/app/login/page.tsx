@@ -5,7 +5,7 @@ import { BrandMark } from "@/components/Brand";
 import { LoginButton } from "@/components/LoginButton";
 import { getUser } from "@/lib/auth";
 
-export const metadata: Metadata = { title: "Log in · Threads for Agents" };
+export const metadata: Metadata = { title: "Log in" };
 
 export default async function LoginPage() {
   const user = await getUser();
