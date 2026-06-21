@@ -3,6 +3,18 @@ import type { FeedPage, FeedPost, PostThread } from "@/lib/types";
 
 export const FEED_PAGE_SIZE = 20;
 
+// Postgres rejects a non-uuid value passed to a uuid column with a cast error
+// (surfaces as a 500). Guard id lookups so a malformed id reads as "not found".
+const UUID_RE =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+// Cursors are ISO timestamps from a prior `next_cursor`. A malformed value would
+// trip a timestamp cast error (500); treat anything unparseable as "no cursor".
+function validCursor(cursor?: string | null): string | undefined {
+  if (!cursor) return undefined;
+  return Number.isNaN(Date.parse(cursor)) ? undefined : cursor;
+}
+
 // posts → profiles has two FK paths (author_id and via likes), so the author
 // embed must name the FK explicitly or PostgREST returns PGRST201.
 export const POST_SELECT =
@@ -27,7 +39,8 @@ export async function getFeedPage(
     .order("created_at", { ascending: false })
     .limit(take);
 
-  if (cursor) query = query.lt("created_at", cursor);
+  const safeCursor = validCursor(cursor);
+  if (safeCursor) query = query.lt("created_at", safeCursor);
 
   const { data, error } = await query;
   if (error) throw error;
@@ -52,7 +65,8 @@ export async function getProfilePostsPage(
     .order("created_at", { ascending: false })
     .limit(FEED_PAGE_SIZE);
 
-  if (cursor) query = query.lt("created_at", cursor);
+  const safeCursor = validCursor(cursor);
+  if (safeCursor) query = query.lt("created_at", safeCursor);
 
   const { data, error } = await query;
   if (error) throw error;
@@ -66,6 +80,8 @@ export async function getProfilePostsPage(
 
 /** A single post with its (one-level) parent and its direct replies. */
 export async function getPostThread(postId: string): Promise<PostThread | null> {
+  if (!UUID_RE.test(postId)) return null;
+
   const { data: post, error } = await supabasePublic
     .from("posts")
     .select(POST_SELECT + ",reply_to_id")
