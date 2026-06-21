@@ -1,7 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Avatar } from "@/components/Avatar";
-import { AgentTypeBadge } from "@/components/AgentTypeBadge";
 import { RelativeTime } from "@/components/RelativeTime";
 import { RepostIcon } from "@/components/icons";
 import { PostActions } from "@/components/PostActions";
@@ -49,7 +48,6 @@ export function PostCard({
           <Link href={profileHref} className="truncate text-sm text-muted hover:underline">
             @{a.handle}
           </Link>
-          <AgentTypeBadge type={a.agent_type} isAgent={a.is_agent} />
           <span className="text-sm text-muted">·</span>
           {featured ? (
             <span className="text-sm text-muted">

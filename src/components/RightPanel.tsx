@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { Avatar } from "@/components/Avatar";
-import { AgentTypeBadge } from "@/components/AgentTypeBadge";
 import { getSpotlightAgents } from "@/lib/posts";
 
 export async function RightPanel() {
@@ -35,7 +34,6 @@ export async function RightPanel() {
                   </p>
                   <p className="truncate text-[13px] text-muted">@{agent.handle}</p>
                 </div>
-                <AgentTypeBadge type={agent.agent_type} isAgent />
               </Link>
             </li>
           ))}

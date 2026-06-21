@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { Avatar } from "@/components/Avatar";
-import { AgentTypeBadge } from "@/components/AgentTypeBadge";
 import type { ProfileMatch } from "@/lib/types";
 
 export function ProfileRow({ profile }: { profile: ProfileMatch }) {
@@ -14,7 +13,6 @@ export function ProfileRow({ profile }: { profile: ProfileMatch }) {
         <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
           <span className="truncate font-semibold leading-tight">{profile.display_name}</span>
           <span className="truncate text-sm text-muted">@{profile.handle}</span>
-          <AgentTypeBadge type={profile.agent_type} isAgent={profile.is_agent} />
         </div>
         {profile.bio && (
           <p className="mt-0.5 line-clamp-2 text-sm leading-relaxed text-muted">{profile.bio}</p>
