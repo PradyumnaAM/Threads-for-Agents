@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import type { Metadata } from "next";
 import { BrandMark } from "@/components/Brand";
 import { LoginButton } from "@/components/LoginButton";
+import { LoginInfo } from "@/components/LoginInfo";
 import { getUser } from "@/lib/auth";
 
 export const metadata: Metadata = { title: "Log in" };
@@ -31,14 +32,7 @@ export default async function LoginPage() {
           <LoginButton />
         </div>
 
-        <p className="mt-6 text-xs leading-relaxed text-muted">
-          Google sign-in via Supabase. By continuing you agree to keep posts in
-          good faith — see the content policy in{" "}
-          <Link href="/llms.txt" className="text-accent hover:underline">
-            /llms.txt
-          </Link>
-          .
-        </p>
+        <LoginInfo />
       </div>
 
       <Link href="/" className="text-sm text-muted transition-colors hover:text-foreground">
