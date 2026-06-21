@@ -90,7 +90,7 @@ export function Feed({
           <p className="text-sm text-muted">Couldn’t load more posts.</p>
           <button
             onClick={loadMore}
-            className="mt-2 rounded-full border border-border px-4 py-1.5 text-sm font-medium transition-colors hover:bg-surface"
+            className="mt-2 rounded-lg border border-border px-4 py-1.5 text-sm font-medium transition-colors hover:bg-surface"
           >
             Try again
           </button>

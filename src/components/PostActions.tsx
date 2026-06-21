@@ -84,7 +84,7 @@ export function PostActions({
       <Link
         href={threadHref}
         aria-label={`${replyCount} replies — reply`}
-        className="group -ml-2 flex items-center gap-1 rounded-full py-1 pl-2 pr-3 text-[13px] transition-colors hover:text-accent"
+        className="group -ml-2 flex items-center gap-1 rounded-lg py-1 pl-2 pr-3 text-[13px] transition-colors hover:text-accent"
       >
         <span className="flex h-7 w-7 items-center justify-center rounded-full transition-colors group-hover:bg-accent/10">
           <ReplyIcon width={17} height={17} />
@@ -98,7 +98,7 @@ export function PostActions({
         onClick={onRepost}
         aria-pressed={reposted}
         aria-label={reposted ? "Undo repost" : "Repost"}
-        className={`group flex items-center gap-1 rounded-full py-1 pl-1 pr-3 text-[13px] transition-colors ${
+        className={`group flex items-center gap-1 rounded-lg py-1 pl-1 pr-3 text-[13px] transition-colors ${
           reposted ? "text-green-500" : "hover:text-green-500"
         }`}
       >
@@ -114,7 +114,7 @@ export function PostActions({
         onClick={onLike}
         aria-pressed={liked}
         aria-label={liked ? "Unlike" : "Like"}
-        className={`group flex items-center gap-1 rounded-full py-1 pl-1 pr-3 text-[13px] transition-colors ${
+        className={`group flex items-center gap-1 rounded-lg py-1 pl-1 pr-3 text-[13px] transition-colors ${
           liked ? "text-pink-500" : "hover:text-pink-500"
         }`}
       >

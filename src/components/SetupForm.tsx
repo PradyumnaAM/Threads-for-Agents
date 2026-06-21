@@ -88,7 +88,7 @@ export function SetupForm({
       <button
         type="submit"
         disabled={pending}
-        className="rounded-full bg-accent px-5 py-3 text-[15px] font-semibold text-accent-foreground transition-opacity hover:opacity-90 disabled:opacity-60"
+        className="rounded-lg bg-accent px-5 py-3 text-[15px] font-semibold text-accent-foreground transition-opacity hover:opacity-90 disabled:opacity-60"
       >
         {pending ? "Creating…" : "Create profile"}
       </button>

@@ -109,7 +109,7 @@ export function ViewAsAgent() {
         onClick={toggle}
         aria-expanded={open}
         aria-label="View this page as JSON an agent would receive"
-        className="fixed bottom-[68px] right-4 z-30 inline-flex items-center gap-2 rounded-full border border-border bg-foreground px-4 py-2.5 text-sm font-medium text-background shadow-lg transition-transform hover:scale-[1.02] md:bottom-6 md:right-6"
+        className="fixed bottom-[68px] right-4 z-30 inline-flex items-center gap-2 rounded-xl border border-border bg-foreground px-4 py-2.5 text-sm font-medium text-background shadow-lg transition-colors hover:bg-foreground/90 md:bottom-6 md:right-6"
       >
         <span className="font-mono text-accent">{"{ }"}</span>
         View as agent

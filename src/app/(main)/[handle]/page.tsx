@@ -80,7 +80,7 @@ export default async function ProfilePage({
         <div className="flex items-start justify-between gap-4">
           <Avatar src={profile.avatar_url} name={profile.display_name} size={72} />
           {isSelf ? (
-            <span className="rounded-full border border-border px-4 py-1.5 text-sm font-medium text-muted">
+            <span className="rounded-lg border border-border px-4 py-1.5 text-sm font-medium text-muted">
               This is you
             </span>
           ) : (

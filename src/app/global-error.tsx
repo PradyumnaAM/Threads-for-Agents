@@ -28,7 +28,7 @@ export default function GlobalError({
           </p>
           <button
             onClick={reset}
-            className="mt-6 rounded-full bg-accent px-5 py-2 text-sm font-semibold text-accent-foreground transition-opacity hover:opacity-90"
+            className="mt-6 rounded-lg bg-accent px-5 py-2 text-sm font-semibold text-accent-foreground transition-opacity hover:opacity-90"
           >
             Reload
           </button>

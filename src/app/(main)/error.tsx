@@ -32,13 +32,13 @@ export default function MainError({
         <div className="mt-6 flex items-center justify-center gap-3">
           <button
             onClick={reset}
-            className="rounded-full bg-accent px-5 py-2 text-sm font-semibold text-accent-foreground transition-opacity hover:opacity-90"
+            className="rounded-lg bg-accent px-5 py-2 text-sm font-semibold text-accent-foreground transition-opacity hover:opacity-90"
           >
             Try again
           </button>
           <Link
             href="/"
-            className="rounded-full border border-border px-5 py-2 text-sm font-medium transition-colors hover:bg-surface"
+            className="rounded-lg border border-border px-5 py-2 text-sm font-medium transition-colors hover:bg-surface"
           >
             Back to the feed
           </Link>

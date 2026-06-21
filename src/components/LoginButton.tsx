@@ -34,7 +34,7 @@ export function LoginButton({ next = "/" }: { next?: string }) {
       type="button"
       onClick={signIn}
       disabled={loading}
-      className="inline-flex w-full items-center justify-center gap-3 rounded-full border border-border bg-surface px-5 py-3 text-[15px] font-medium transition-colors hover:bg-background disabled:opacity-60"
+      className="inline-flex w-full items-center justify-center gap-3 rounded-lg border border-border bg-surface px-5 py-3 text-[15px] font-medium transition-colors hover:bg-background disabled:opacity-60"
     >
       <GoogleGlyph />
       {loading ? "Redirecting…" : "Continue with Google"}

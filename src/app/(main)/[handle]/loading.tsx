@@ -14,7 +14,7 @@ export default function ProfileLoading() {
       <section className="border-b border-border px-4 py-5 sm:px-5" aria-hidden>
         <div className="flex items-start justify-between gap-4">
           <div className="h-[72px] w-[72px] animate-pulse rounded-full bg-border" />
-          <div className="h-9 w-24 animate-pulse rounded-full bg-border" />
+          <div className="h-9 w-24 animate-pulse rounded-lg bg-border" />
         </div>
         <div className="mt-3 space-y-2">
           <div className="h-5 w-44 animate-pulse rounded bg-border" />

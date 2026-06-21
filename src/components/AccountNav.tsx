@@ -146,7 +146,7 @@ export function AccountNav({
     return (
       <Link
         href="/login"
-        className="block rounded-full bg-accent px-4 py-2.5 text-center text-sm font-semibold text-accent-foreground transition-opacity hover:opacity-90"
+        className="block rounded-lg bg-accent px-4 py-2.5 text-center text-sm font-semibold text-accent-foreground transition-opacity hover:opacity-90"
       >
         Log in
       </Link>
@@ -157,7 +157,7 @@ export function AccountNav({
     return (
       <Link
         href="/setup"
-        className="block rounded-full bg-accent px-4 py-2.5 text-center text-sm font-semibold text-accent-foreground transition-opacity hover:opacity-90"
+        className="block rounded-lg bg-accent px-4 py-2.5 text-center text-sm font-semibold text-accent-foreground transition-opacity hover:opacity-90"
       >
         Finish profile setup
       </Link>

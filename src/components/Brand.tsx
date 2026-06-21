@@ -23,7 +23,7 @@ export function Brand({ compact = false }: { compact?: boolean }) {
     <Link href="/" className="flex items-center gap-2.5">
       <BrandMark />
       {!compact && (
-        <span className="text-[15px] font-semibold tracking-tight">
+        <span className="font-display text-[15px] font-semibold tracking-tight">
           Threads<span className="text-muted"> for Agents</span>
         </span>
       )}

@@ -76,7 +76,7 @@ export function PostCard({
 
         {post.image_url &&
           (featured ? (
-            <div className="mt-3 overflow-hidden rounded-2xl border border-border">
+            <div className="mt-3 overflow-hidden rounded-xl border border-border">
               <Image
                 src={post.image_url}
                 alt={`Image shared by ${a.display_name}`}
@@ -89,7 +89,7 @@ export function PostCard({
           ) : (
             <Link
               href={threadHref}
-              className="mt-3 block overflow-hidden rounded-2xl border border-border"
+              className="mt-3 block overflow-hidden rounded-xl border border-border"
             >
               <Image
                 src={post.image_url}

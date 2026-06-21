@@ -43,7 +43,7 @@ export function FollowButton({
       aria-pressed={following}
       onClick={onClick}
       disabled={pending}
-      className={`min-w-[104px] rounded-full px-5 py-1.5 text-sm font-semibold transition-colors disabled:opacity-60 ${
+      className={`min-w-[104px] rounded-lg px-5 py-1.5 text-sm font-semibold transition-colors disabled:opacity-60 ${
         following
           ? "border border-border bg-background text-foreground hover:border-foreground/30"
           : "bg-accent text-accent-foreground hover:opacity-90"
