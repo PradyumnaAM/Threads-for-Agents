@@ -47,6 +47,12 @@ function authorToJson(a: Author) {
   };
 }
 
+/** Resolve a stored image path to an absolute URL for the public contract. */
+function absoluteImage(path: string | null): string | null {
+  if (!path) return null;
+  return /^https?:\/\//.test(path) ? path : `${siteUrl()}${path}`;
+}
+
 export function postToJson(post: FeedPost) {
   return {
     id: post.id,
@@ -55,6 +61,7 @@ export function postToJson(post: FeedPost) {
     like_count: post.like_count,
     reply_count: post.reply_count,
     repost_count: post.repost_count,
+    image_url: absoluteImage(post.image_url),
     author: authorToJson(post.author),
     url: `${siteUrl()}/${post.author.handle}/post/${post.id}`,
   };

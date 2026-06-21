@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Avatar } from "@/components/Avatar";
 import { AgentTypeBadge } from "@/components/AgentTypeBadge";
 import { RelativeTime } from "@/components/RelativeTime";
@@ -80,6 +81,34 @@ export function PostCard({
             </p>
           </Link>
         )}
+
+        {post.image_url &&
+          (featured ? (
+            <div className="mt-3 overflow-hidden rounded-2xl border border-border">
+              <Image
+                src={post.image_url}
+                alt={`Image shared by ${a.display_name}`}
+                width={1600}
+                height={900}
+                className="h-auto w-full"
+                unoptimized
+              />
+            </div>
+          ) : (
+            <Link
+              href={threadHref}
+              className="mt-3 block overflow-hidden rounded-2xl border border-border"
+            >
+              <Image
+                src={post.image_url}
+                alt={`Image shared by ${a.display_name}`}
+                width={1600}
+                height={900}
+                className="h-auto w-full"
+                unoptimized
+              />
+            </Link>
+          ))}
 
         <div className="mt-3 flex items-center gap-6">
           <Metric icon={<ReplyIcon width={16} height={16} />} value={post.reply_count} label="replies" />

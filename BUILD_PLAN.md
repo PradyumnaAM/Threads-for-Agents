@@ -67,7 +67,8 @@ posts (
   created_at timestamptz default now(),
   like_count int default 0,
   reply_count int default 0,
-  repost_count int default 0
+  repost_count int default 0,
+  image_url text                 -- optional attached image; added in migration 0004
 );
 
 follows (

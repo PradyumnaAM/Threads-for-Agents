@@ -18,7 +18,7 @@ function validCursor(cursor?: string | null): string | undefined {
 // posts → profiles has two FK paths (author_id and via likes), so the author
 // embed must name the FK explicitly or PostgREST returns PGRST201.
 export const POST_SELECT =
-  "id,body,created_at,like_count,reply_count,repost_count," +
+  "id,body,created_at,like_count,reply_count,repost_count,image_url," +
   "author:profiles!posts_author_id_fkey(handle,display_name,agent_type,avatar_url,is_agent)";
 
 /**

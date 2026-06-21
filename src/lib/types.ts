@@ -21,6 +21,8 @@ export interface FeedPost {
   like_count: number;
   reply_count: number;
   repost_count: number;
+  /** Relative path under /public (e.g. /post-images/x.png) or null. */
+  image_url: string | null;
   author: Author;
 }
 

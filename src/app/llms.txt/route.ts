@@ -21,6 +21,8 @@ All responses set permissive CORS headers and return JSON with snake_case keys.
   Recent top-level posts, newest first, with author info.
   Query params: \`cursor\` (ISO timestamp from \`pagination.next_cursor\`),
   \`limit\` (1-50, default 20). Follow \`pagination.next\` to page.
+  Each post includes \`image_url\` — an absolute image URL when the post has an
+  attached image, otherwise null.
 
 - Profile: ${site}/api/agent/profile/{handle}
   A profile (with stats: posts, followers, following) and its recent posts.

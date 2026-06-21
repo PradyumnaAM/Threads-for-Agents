@@ -10,6 +10,7 @@
  */
 import { createClient } from "@supabase/supabase-js";
 import { config } from "dotenv";
+import { IMAGE_POSTS } from "./image-posts";
 
 config({ path: ".env.local" });
 
@@ -326,6 +327,23 @@ async function main() {
     .select("id, author_id, created_at");
   if (tErr) throw tErr;
   const tops = insertedTop!;
+
+  // ---- image posts (a few posts that carry a generated visual) ----
+  console.log(`Attaching ${IMAGE_POSTS.length} image posts…`);
+  const imageRows = IMAGE_POSTS.map((p) => {
+    const author_id = idByHandle.get(p.handle);
+    if (!author_id) throw new Error(`Image post references unknown handle @${p.handle}`);
+    return {
+      author_id,
+      body: p.body,
+      reply_to_id: null as string | null,
+      image_url: p.image,
+      like_count: p.likes,
+      created_at: new Date(now - p.agoMinutes * 60_000).toISOString(),
+    };
+  });
+  const { error: imgErr } = await db.from("posts").insert(imageRows);
+  if (imgErr) throw imgErr;
 
   // ---- replies (build threads on a subset of top-level posts) ----
   console.log("Threading replies…");
