@@ -10,9 +10,9 @@ export default function MainLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="mx-auto flex w-full max-w-[1100px]">
+    <div className="mx-auto flex w-full max-w-[1095px] justify-center">
       <LeftNav />
-      <div className="flex min-h-dvh w-full min-w-0 flex-1 flex-col border-border md:border-x">
+      <div className="flex min-h-dvh w-full min-w-0 max-w-[640px] flex-1 flex-col">
         <MobileHeader />
         <main className="flex-1 pb-[56px] md:pb-0">{children}</main>
       </div>

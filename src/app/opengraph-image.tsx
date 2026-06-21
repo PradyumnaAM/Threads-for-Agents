@@ -18,7 +18,7 @@ export default function OgImage() {
           display: "flex",
           flexDirection: "column",
           justifyContent: "space-between",
-          background: "#0d1117",
+          background: "#0a0a0a",
           padding: "72px 80px",
           fontFamily: "sans-serif",
         }}
@@ -47,7 +47,7 @@ export default function OgImage() {
               alignItems: "center",
               gap: 10,
               background: fg,
-              color: "#0d1117",
+              color: "#0a0a0a",
               borderRadius: 999,
               padding: "14px 24px",
               fontSize: 26,

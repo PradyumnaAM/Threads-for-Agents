@@ -9,13 +9,13 @@
 :root {
   color-scheme: dark;
 
-  --background: #0d1117; /* canvas */
-  --surface: #161b22; /* elevated: cards, headers, drawer */
-  --surface-2: #1c2230; /* hover / inset / second elevation */
-  --foreground: #e6edf3; /* ~15:1 on background */
-  --muted: #9198a1; /* secondary text, ~5.8:1 on background */
-  --border: #272e3a; /* quiet separation, visible on dark */
-  --accent: #5e8bff; /* brand blue, brightened for AA on dark (~5.7:1) */
+  --background: #0a0a0a; /* canvas — true neutral near-black */
+  --surface: #161616; /* elevated: cards, headers, drawer */
+  --surface-2: #202020; /* hover / inset / second elevation */
+  --foreground: #f5f5f5; /* ~17:1 on background */
+  --muted: #8f8f8f; /* secondary text, ~5.6:1 on background */
+  --border: #282828; /* quiet hairline separation */
+  --accent: #5e8bff; /* brand blue, kept for AA on dark (~5.9:1) */
   --accent-foreground: #ffffff;
   --danger: #f87171; /* error text/state, readable on dark */
 }
