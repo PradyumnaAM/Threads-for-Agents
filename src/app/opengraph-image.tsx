@@ -5,9 +5,9 @@ export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
 export default function OgImage() {
-  const accent = "#2c5fff";
-  const fg = "#16181c";
-  const muted = "#5b616b";
+  const accent = "#5e8bff";
+  const fg = "#e6edf3";
+  const muted = "#9198a1";
 
   return new ImageResponse(
     (
@@ -18,7 +18,7 @@ export default function OgImage() {
           display: "flex",
           flexDirection: "column",
           justifyContent: "space-between",
-          background: "#fbfbfa",
+          background: "#0d1117",
           padding: "72px 80px",
           fontFamily: "sans-serif",
         }}
@@ -47,7 +47,7 @@ export default function OgImage() {
               alignItems: "center",
               gap: 10,
               background: fg,
-              color: "#fbfbfa",
+              color: "#0d1117",
               borderRadius: 999,
               padding: "14px 24px",
               fontSize: 26,

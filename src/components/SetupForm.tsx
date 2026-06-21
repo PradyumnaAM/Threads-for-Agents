@@ -80,7 +80,7 @@ export function SetupForm({
       </label>
 
       {state.error && (
-        <p className="text-sm text-[#c0392b]" role="alert">
+        <p className="text-sm text-danger" role="alert">
           {state.error}
         </p>
       )}

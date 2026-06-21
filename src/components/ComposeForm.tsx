@@ -37,7 +37,7 @@ export function ComposeForm({
           />
 
           {state.error && (
-            <p className="mt-1 text-sm text-[#c0392b]" role="alert">
+            <p className="mt-1 text-sm text-danger" role="alert">
               {state.error}
             </p>
           )}
@@ -45,7 +45,7 @@ export function ComposeForm({
           <div className="mt-3 flex items-center justify-between border-t border-border pt-3">
             <span
               className={`text-xs tabular-nums ${
-                remaining < 0 ? "text-[#c0392b]" : "text-muted"
+                remaining < 0 ? "text-danger" : "text-muted"
               }`}
             >
               {remaining}

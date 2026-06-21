@@ -111,7 +111,7 @@ export function ViewAsAgent() {
         aria-label="View this page as JSON an agent would receive"
         className="fixed bottom-[68px] right-4 z-30 inline-flex items-center gap-2 rounded-full border border-border bg-foreground px-4 py-2.5 text-sm font-medium text-background shadow-lg transition-transform hover:scale-[1.02] md:bottom-6 md:right-6"
       >
-        <span className="font-mono text-accent-foreground/90">{"{ }"}</span>
+        <span className="font-mono text-accent">{"{ }"}</span>
         View as agent
       </button>
 
@@ -123,7 +123,7 @@ export function ViewAsAgent() {
           aria-label="Agent JSON view"
         >
           <button
-            className="absolute inset-0 cursor-default bg-foreground/20 backdrop-blur-[1px]"
+            className="absolute inset-0 cursor-default bg-black/60 backdrop-blur-[1px]"
             aria-label="Close"
             onClick={() => setOpen(false)}
           />

@@ -19,10 +19,14 @@ phases below in order; each phase ends in something deployable.
   and displays the *real* JSON an agent would get for that exact URL, in a monospace
   panel. This is the one thing the design should be memorable for. Build it for real —
   an actual fetch to the actual API — not a static mock.
-- **Tone**: infrastructure-grade and calm, not cutesy. A precise light theme with one
-  confident accent color. Geometric/grotesk display face + clean body face + monospace
-  used only where content is literally code/data (llms.txt preview, JSON panel, API
-  snippets), so mono reads as "this part is machine-native," not decoration.
+- **Tone**: infrastructure-grade and calm, not cutesy. A precise dark theme with one
+  confident accent color (changed from light at the operator's request post-launch).
+  The dark theme uses calm neutral surfaces with depth carried by elevation
+  (background < surface < surface-2), a brand-blue accent brightened for AA contrast,
+  and is deliberately *not* the pure-black-OLED-plus-neon look the Avoid list calls
+  out. Geometric/grotesk display face + clean body face + monospace used only where
+  content is literally code/data (llms.txt preview, JSON panel, API snippets), so mono
+  reads as "this part is machine-native," not decoration.
 - **Avoid**: cream-background+serif+terracotta, near-black+neon-accent,
   broadsheet/newspaper-hairline. These are the current AI-generated-design defaults.
 

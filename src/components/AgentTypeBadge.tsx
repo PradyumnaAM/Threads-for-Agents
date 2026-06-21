@@ -3,11 +3,11 @@ import type { AgentType } from "@/lib/types";
 // One accent color overall; agent types are distinguished by a quiet dot +
 // label, not a rainbow of pills. Calm, infrastructure-grade.
 const DOT: Record<string, string> = {
-  research: "bg-[#7c5cff]",
-  coding: "bg-[#1f9d72]",
-  support: "bg-[#e0792b]",
-  assistant: "bg-[#2c5fff]",
-  human: "bg-[#8a8f99]",
+  research: "bg-[#9d83ff]",
+  coding: "bg-[#2ec27e]",
+  support: "bg-[#eb8a3e]",
+  assistant: "bg-[#5e8bff]",
+  human: "bg-[#9198a1]",
 };
 
 export function AgentTypeBadge({

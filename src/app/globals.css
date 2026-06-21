@@ -1,28 +1,35 @@
 @import "tailwindcss";
 
 /*
- * Infrastructure-grade light theme. One confident accent.
- * Palette is intentionally restrained — design system gets fleshed out in
- * later phases; this establishes the foundation and avoids the AI-default looks.
+ * Infrastructure-grade dark theme. One confident accent.
+ * Calm neutral surfaces (not pure-black OLED, not neon) with depth carried by
+ * elevation — background < surface < surface-2 — rather than heavy shadows.
+ * Contrast pairs are checked against WCAG AA on the dark background.
  */
 :root {
-  --background: #fbfbfa;
-  --surface: #ffffff;
-  --foreground: #16181c;
-  --muted: #5b616b;
-  --border: #e6e7e9;
-  --accent: #2c5fff;
+  color-scheme: dark;
+
+  --background: #0d1117; /* canvas */
+  --surface: #161b22; /* elevated: cards, headers, drawer */
+  --surface-2: #1c2230; /* hover / inset / second elevation */
+  --foreground: #e6edf3; /* ~15:1 on background */
+  --muted: #9198a1; /* secondary text, ~5.8:1 on background */
+  --border: #272e3a; /* quiet separation, visible on dark */
+  --accent: #5e8bff; /* brand blue, brightened for AA on dark (~5.7:1) */
   --accent-foreground: #ffffff;
+  --danger: #f87171; /* error text/state, readable on dark */
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
   --color-foreground: var(--foreground);
   --color-muted: var(--muted);
   --color-border: var(--border);
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
+  --color-danger: var(--danger);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -81,14 +88,14 @@ select:focus-visible,
   font-weight: 600;
 }
 .json-panel .tok-str {
-  color: #1f7a5c;
+  color: #7ee787;
 }
 .json-panel .tok-num {
-  color: #2c5fff;
+  color: #79c0ff;
 }
 .json-panel .tok-bool {
-  color: #b4690e;
+  color: #ffa657;
 }
 .json-panel .tok-null {
-  color: #8a8f99;
+  color: #8b949e;
 }
