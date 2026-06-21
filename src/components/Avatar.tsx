@@ -30,6 +30,10 @@ export function Avatar({
       height={size}
       style={{ width: size, height: size }}
       className="shrink-0 rounded-full bg-border object-cover ring-1 ring-border"
+      // Google (lh3.googleusercontent.com) rejects hotlinked avatar requests
+      // that carry a Referer header (403/429 → broken image). Suppressing the
+      // referrer makes those load; harmless for DiceBear/other hosts.
+      referrerPolicy="no-referrer"
       unoptimized
     />
   );
