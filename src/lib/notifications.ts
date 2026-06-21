@@ -13,77 +13,98 @@ export interface NotificationItem {
   created_at: string;
 }
 
+type Actor = { handle: string; display_name: string; avatar_url: string | null };
+
+function excerpt(body: string): string {
+  return body.length > 70 ? body.slice(0, 70) + "…" : body;
+}
+
 /**
- * Demo notifications built from real profiles/posts that exist in the data, so
- * avatars and links resolve. These are illustrative (not a real per-user
- * notifications store) — they show what liked/reposted/followed activity on the
- * viewer's content would look like.
+ * Real notifications for the signed-in viewer: who actually followed them, and
+ * who liked or reposted one of their posts. Backed by the follows/likes/reposts
+ * tables, so the bell stays consistent with the profile's follower counts.
  */
-export async function getNotifications(): Promise<NotificationItem[]> {
-  const [{ data: profiles }, { data: posts }] = await Promise.all([
+export async function getNotifications(viewerId: string | null): Promise<NotificationItem[]> {
+  if (!viewerId) return [];
+
+  const LIMIT = 25;
+
+  // The viewer's posts — targets for like/repost notifications (+ excerpt/href).
+  const { data: myPosts } = await supabasePublic
+    .from("posts")
+    .select("id, body, author:profiles!posts_author_id_fkey(handle)")
+    .eq("author_id", viewerId);
+  const myPostIds = (myPosts ?? []).map((p) => p.id as string);
+  const postInfo = new Map(
+    ((myPosts ?? []) as unknown as { id: string; body: string; author: { handle: string } }[]).map(
+      (p) => [p.id, { excerpt: excerpt(p.body), href: `/${p.author.handle}/post/${p.id}` }],
+    ),
+  );
+
+  const empty = Promise.resolve({ data: [] as unknown[] });
+  const [followsRes, likesRes, repostsRes] = await Promise.all([
     supabasePublic
-      .from("profiles")
-      .select("handle, display_name, avatar_url")
-      .eq("is_agent", true)
-      .order("created_at", { ascending: true })
-      .limit(7),
-    supabasePublic
-      .from("posts")
-      .select("id, body, author:profiles!posts_author_id_fkey(handle)")
-      .is("reply_to_id", null)
+      .from("follows")
+      .select("created_at, actor:profiles!follows_follower_id_fkey(handle,display_name,avatar_url)")
+      .eq("followee_id", viewerId)
       .order("created_at", { ascending: false })
-      .limit(3),
+      .limit(LIMIT),
+    myPostIds.length
+      ? supabasePublic
+          .from("likes")
+          .select("created_at, post_id, actor:profiles!likes_profile_id_fkey(handle,display_name,avatar_url)")
+          .in("post_id", myPostIds)
+          .order("created_at", { ascending: false })
+          .limit(LIMIT)
+      : empty,
+    myPostIds.length
+      ? supabasePublic
+          .from("reposts")
+          .select("created_at, post_id, actor:profiles!reposts_profile_id_fkey(handle,display_name,avatar_url)")
+          .in("post_id", myPostIds)
+          .order("created_at", { ascending: false })
+          .limit(LIMIT)
+      : empty,
   ]);
 
-  const actors = profiles ?? [];
-  const targets = (posts ?? []) as unknown as {
-    id: string;
-    body: string;
-    author: { handle: string };
-  }[];
-  if (actors.length === 0) return [];
-
-  const minutesAgo = (m: number) => new Date(Date.now() - m * 60_000).toISOString();
-  const excerpt = (body: string) => (body.length > 70 ? body.slice(0, 70) + "…" : body);
-  const threadHref = (p: { id: string; author: { handle: string } }) =>
-    `/${p.author.handle}/post/${p.id}`;
-
-  // A believable mixed sequence, newest first. Guarded by what's available.
-  const plan: { type: NotificationType; actor: number; post?: number; min: number }[] = [
-    { type: "like", actor: 0, post: 0, min: 4 },
-    { type: "follow", actor: 1, min: 26 },
-    { type: "repost", actor: 2, post: 1, min: 55 },
-    { type: "like", actor: 3, post: 0, min: 130 },
-    { type: "follow", actor: 4, min: 280 },
-    { type: "repost", actor: 5, post: 2, min: 420 },
-    { type: "like", actor: 6, post: 1, min: 1180 },
-  ];
-
   const items: NotificationItem[] = [];
-  for (const [i, p] of plan.entries()) {
-    const actor = actors[p.actor % actors.length];
-    if (!actor) continue;
-    if (p.type === "follow") {
-      items.push({
-        id: `n${i}`,
-        type: "follow",
-        actor,
-        excerpt: null,
-        href: `/${actor.handle}`,
-        created_at: minutesAgo(p.min),
-      });
-    } else {
-      const post = targets[(p.post ?? 0) % Math.max(targets.length, 1)];
-      if (!post) continue;
-      items.push({
-        id: `n${i}`,
-        type: p.type,
-        actor,
-        excerpt: excerpt(post.body),
-        href: threadHref(post),
-        created_at: minutesAgo(p.min),
-      });
-    }
+
+  for (const f of (followsRes.data ?? []) as unknown as { created_at: string; actor: Actor | null }[]) {
+    if (!f.actor) continue;
+    items.push({
+      id: `f-${f.actor.handle}-${f.created_at}`,
+      type: "follow",
+      actor: f.actor,
+      excerpt: null,
+      href: `/${f.actor.handle}`,
+      created_at: f.created_at,
+    });
   }
-  return items;
+  for (const l of (likesRes.data ?? []) as unknown as { created_at: string; post_id: string; actor: Actor | null }[]) {
+    if (!l.actor) continue;
+    const info = postInfo.get(l.post_id);
+    items.push({
+      id: `l-${l.post_id}-${l.actor.handle}`,
+      type: "like",
+      actor: l.actor,
+      excerpt: info?.excerpt ?? null,
+      href: info?.href ?? `/${l.actor.handle}`,
+      created_at: l.created_at,
+    });
+  }
+  for (const r of (repostsRes.data ?? []) as unknown as { created_at: string; post_id: string; actor: Actor | null }[]) {
+    if (!r.actor) continue;
+    const info = postInfo.get(r.post_id);
+    items.push({
+      id: `r-${r.post_id}-${r.actor.handle}`,
+      type: "repost",
+      actor: r.actor,
+      excerpt: info?.excerpt ?? null,
+      href: info?.href ?? `/${r.actor.handle}`,
+      created_at: r.created_at,
+    });
+  }
+
+  items.sort((a, b) => (a.created_at < b.created_at ? 1 : -1));
+  return items.slice(0, LIMIT);
 }

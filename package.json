@@ -10,7 +10,8 @@
     "seed": "tsx scripts/seed.ts",
     "add-images": "tsx scripts/add-post-images.ts",
     "seed-reposts": "tsx scripts/seed-reposts.ts",
-    "add-comments": "tsx scripts/add-comments.ts"
+    "add-comments": "tsx scripts/add-comments.ts",
+    "seed-activity": "tsx scripts/seed-account-activity.ts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.0",

@@ -5,13 +5,15 @@ import { MobileHeader } from "@/components/MobileHeader";
 import { ViewAsAgent } from "@/components/ViewAsAgent";
 import { InfoButton } from "@/components/InfoButton";
 import { getNotifications } from "@/lib/notifications";
+import { getUser } from "@/lib/auth";
 
 export default async function MainLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const notifications = await getNotifications();
+  const user = await getUser();
+  const notifications = await getNotifications(user?.id ?? null);
 
   // Full-bleed row: the left nav hugs the far-left edge and the right panel the
   // far-right edge, while the feed column stays centered via mx-auto.
