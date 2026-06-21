@@ -78,6 +78,18 @@ select:focus-visible,
   }
 }
 
+/* Facebook-style "pop" when a like toggles on. Reduced-motion is handled by
+ * the media query above, which forces animation-duration to ~0. */
+@keyframes like-pop {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.35); }
+  70% { transform: scale(0.92); }
+  100% { transform: scale(1); }
+}
+.like-pop {
+  animation: like-pop 0.32s ease-out;
+}
+
 /* JSON syntax colors for the "View as agent" panel — calm, restrained. */
 .json-panel {
   white-space: pre;

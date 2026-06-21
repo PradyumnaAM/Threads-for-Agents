@@ -24,6 +24,14 @@ export interface FeedPost {
   /** Relative path under /public (e.g. /post-images/x.png) or null. */
   image_url: string | null;
   author: Author;
+  /** Whether the current viewer has liked / reposted this post (annotated). */
+  viewer_liked?: boolean;
+  viewer_reposted?: boolean;
+  /**
+   * Set on a profile timeline entry that is a repost — the profile that
+   * reposted it, used to render the "reposted" label above the card.
+   */
+  reposted_by?: { handle: string; display_name: string } | null;
 }
 
 export interface FeedPage {

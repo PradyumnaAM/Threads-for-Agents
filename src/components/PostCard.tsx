@@ -3,48 +3,40 @@ import Image from "next/image";
 import { Avatar } from "@/components/Avatar";
 import { AgentTypeBadge } from "@/components/AgentTypeBadge";
 import { RelativeTime } from "@/components/RelativeTime";
-import { HeartIcon, ReplyIcon, RepostIcon } from "@/components/icons";
+import { RepostIcon } from "@/components/icons";
+import { PostActions } from "@/components/PostActions";
 import type { FeedPost } from "@/lib/types";
-
-function compact(n: number): string {
-  if (n < 1000) return String(n);
-  return `${(n / 1000).toFixed(n < 10000 ? 1 : 0)}k`;
-}
-
-function Metric({
-  icon,
-  value,
-  label,
-}: {
-  icon: React.ReactNode;
-  value: number;
-  label: string;
-}) {
-  return (
-    <span className="inline-flex items-center gap-1.5 text-muted" aria-label={`${value} ${label}`}>
-      {icon}
-      <span className="text-[13px] tabular-nums">{compact(value)}</span>
-    </span>
-  );
-}
 
 export function PostCard({
   post,
   featured = false,
+  authed = false,
 }: {
   post: FeedPost;
   featured?: boolean;
+  authed?: boolean;
 }) {
   const a = post.author;
   const profileHref = `/${a.handle}`;
   const threadHref = `/${a.handle}/post/${post.id}`;
+  const repostedBy = post.reposted_by;
 
   return (
     <article
-      className={`flex items-start gap-3 border-b border-border px-4 py-4 sm:px-5 ${
+      className={`border-b border-border px-4 py-4 sm:px-5 ${
         featured ? "" : "transition-colors hover:bg-surface"
       }`}
     >
+      {repostedBy && (
+        <div className="mb-1.5 flex items-center gap-2 pl-[3.25rem] text-[13px] font-medium text-muted">
+          <RepostIcon width={14} height={14} className="text-green-500" />
+          <Link href={`/${repostedBy.handle}`} className="hover:underline">
+            {repostedBy.display_name} reposted
+          </Link>
+        </div>
+      )}
+
+      <div className="flex items-start gap-3">
       <Link href={profileHref} className="shrink-0">
         <Avatar src={a.avatar_url} name={a.display_name} size={featured ? 48 : 44} />
       </Link>
@@ -110,10 +102,16 @@ export function PostCard({
             </Link>
           ))}
 
-        <div className="mt-3 flex items-center gap-6">
-          <Metric icon={<ReplyIcon width={16} height={16} />} value={post.reply_count} label="replies" />
-          <Metric icon={<RepostIcon width={16} height={16} />} value={post.repost_count} label="reposts" />
-          <Metric icon={<HeartIcon width={16} height={16} />} value={post.like_count} label="likes" />
+          <PostActions
+            postId={post.id}
+            threadHref={threadHref}
+            likeCount={post.like_count}
+            replyCount={post.reply_count}
+            repostCount={post.repost_count}
+            liked={post.viewer_liked}
+            reposted={post.viewer_reposted}
+            authed={authed}
+          />
         </div>
       </div>
     </article>

@@ -9,12 +9,14 @@ export function Feed({
   initialCursor,
   loadMore: loadMoreAction,
   emptyState,
+  authed = false,
 }: {
   initialPosts: FeedPost[];
   initialCursor: string | null;
   /** Server action returning the next page for a given cursor. */
   loadMore: (cursor: string) => Promise<FeedPage>;
   emptyState?: React.ReactNode;
+  authed?: boolean;
 }) {
   const [posts, setPosts] = useState<FeedPost[]>(initialPosts);
   const [cursor, setCursor] = useState<string | null>(initialCursor);
@@ -68,7 +70,7 @@ export function Feed({
   return (
     <div>
       {posts.map((post) => (
-        <PostCard key={post.id} post={post} />
+        <PostCard key={post.id} post={post} authed={authed} />
       ))}
 
       {cursor && (

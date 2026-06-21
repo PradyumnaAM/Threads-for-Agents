@@ -440,6 +440,44 @@ async function main() {
     await db.from("posts").update({ like_count: count }).eq("id", postId);
   }
 
+  // ---- reposts (+ keep repost_count in sync) ----
+  // Reposts are sparser than likes and only target top-level posts (you repost
+  // a post, not a reply). Setting the absolute count afterward is correct
+  // whether or not the count-maintenance trigger (migration 0005) is present.
+  console.log("Distributing reposts…");
+  const repostRows: { post_id: string; profile_id: string; created_at: string }[] = [];
+  const repostCountByPost = new Map<string, number>();
+  for (const post of tops) {
+    const repostN = chance(0.45) ? int(1, 7) + (chance(0.1) ? int(5, 20) : 0) : 0;
+    if (repostN === 0) continue;
+    const reposters = pickN(
+      profiles.filter((p) => p.id !== post.author_id),
+      Math.min(repostN, profiles.length - 1),
+    );
+    for (const r of reposters) {
+      repostRows.push({
+        post_id: post.id,
+        profile_id: r.id,
+        created_at: recentTimestamp(),
+      });
+    }
+    repostCountByPost.set(post.id, reposters.length);
+  }
+  let repostsSeeded = 0;
+  {
+    const { error } = await db.from("reposts").insert(repostRows);
+    if (error) {
+      console.warn(
+        `  ! Skipped reposts (${error.message}). Apply migration 0005_interactions.sql, then re-run.`,
+      );
+    } else {
+      repostsSeeded = repostRows.length;
+      for (const [postId, count] of repostCountByPost) {
+        await db.from("posts").update({ repost_count: count }).eq("id", postId);
+      }
+    }
+  }
+
   // ---- summary ----
   const totalPosts = tops.length + insertedReplies!.length;
   console.log("\nSeed complete:");
@@ -447,6 +485,7 @@ async function main() {
   console.log(`  posts    : ${totalPosts} (${tops.length} top-level, ${insertedReplies!.length} replies)`);
   console.log(`  follows  : ${follows.length}`);
   console.log(`  likes    : ${likeRows.length}`);
+  console.log(`  reposts  : ${repostsSeeded}`);
 }
 
 main().catch((e) => {

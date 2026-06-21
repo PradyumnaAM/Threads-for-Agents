@@ -6,7 +6,7 @@ import { FollowButton } from "@/components/FollowButton";
 import { Feed } from "@/components/Feed";
 import { PageHeader } from "@/components/PageHeader";
 import { getProfileByHandle, getProfileStats } from "@/lib/profiles";
-import { getProfilePostsPage } from "@/lib/posts";
+import { getProfileTimelinePage, annotateViewerState } from "@/lib/posts";
 import { loadMoreProfilePosts } from "@/app/(main)/actions";
 import { getCurrentProfile } from "@/lib/auth";
 import { supabasePublic } from "@/lib/supabase/public-client";
@@ -50,9 +50,10 @@ export default async function ProfilePage({
 
   const [stats, firstPage, { user: viewer }] = await Promise.all([
     getProfileStats(profile.id),
-    getProfilePostsPage(profile.id),
+    getProfileTimelinePage(profile),
     getCurrentProfile(),
   ]);
+  await annotateViewerState(firstPage.posts, viewer?.id);
 
   const isSelf = viewer?.id === profile.id;
   let isFollowing = false;
@@ -130,7 +131,12 @@ export default async function ProfilePage({
       <Feed
         initialPosts={firstPage.posts}
         initialCursor={firstPage.nextCursor}
-        loadMore={loadMoreProfilePosts.bind(null, profile.id)}
+        authed={!!viewer}
+        loadMore={loadMoreProfilePosts.bind(null, {
+          id: profile.id,
+          handle: profile.handle,
+          display_name: profile.display_name,
+        })}
         emptyState={
           <div className="px-6 py-20 text-center">
             <p className="font-medium">No posts yet</p>

@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "seed": "tsx scripts/seed.ts",
-    "add-images": "tsx scripts/add-post-images.ts"
+    "add-images": "tsx scripts/add-post-images.ts",
+    "seed-reposts": "tsx scripts/seed-reposts.ts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.0",

@@ -8,6 +8,12 @@ export const FEED_PAGE_SIZE = 20;
 const UUID_RE =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
+// A PostgREST/Postgres "relation does not exist" error — used to degrade
+// gracefully when an optional table (e.g. reposts, pre-migration) is absent.
+function isMissingTable(err: { code?: string } | null): boolean {
+  return err?.code === "42P01" || err?.code === "PGRST205";
+}
+
 // Cursors are ISO timestamps from a prior `next_cursor`. A malformed value would
 // trip a timestamp cast error (500); treat anything unparseable as "no cursor".
 function validCursor(cursor?: string | null): string | undefined {
@@ -48,6 +54,107 @@ export async function getFeedPage(
   const posts = (data ?? []) as unknown as FeedPost[];
   const nextCursor =
     posts.length === take ? posts[posts.length - 1].created_at : null;
+
+  return { posts, nextCursor };
+}
+
+/**
+ * Mark each post with whether `viewerId` has liked / reposted it. No-op (leaves
+ * the flags undefined) when there's no viewer. Two small public reads — likes
+ * and reposts are public-select, filtered to the viewer's own rows.
+ */
+export async function annotateViewerState<T extends FeedPost>(
+  posts: T[],
+  viewerId: string | null | undefined,
+): Promise<T[]> {
+  if (!viewerId || posts.length === 0) return posts;
+  const ids = posts.map((p) => p.id);
+
+  const [likesRes, repostsRes] = await Promise.all([
+    supabasePublic.from("likes").select("post_id").eq("profile_id", viewerId).in("post_id", ids),
+    supabasePublic.from("reposts").select("post_id").eq("profile_id", viewerId).in("post_id", ids),
+  ]);
+
+  const liked = new Set((likesRes.data ?? []).map((r) => r.post_id as string));
+  const reposted = new Set((repostsRes.data ?? []).map((r) => r.post_id as string));
+  for (const p of posts) {
+    p.viewer_liked = liked.has(p.id);
+    p.viewer_reposted = reposted.has(p.id);
+  }
+  return posts;
+}
+
+/**
+ * One page of a profile's timeline: their own top-level posts interleaved with
+ * the posts they've reposted, newest-activity first. The cursor is the activity
+ * timestamp of the last row seen (a post's created_at, or a repost's created_at).
+ *
+ * Implemented as a two-query timestamp merge (no RPC): fetch up to a page of own
+ * posts and a page of reposts older than the cursor, tag each with its activity
+ * time, merge, and take the newest page-worth. Reposted entries carry
+ * `reposted_by` so the card can show the "reposted" label.
+ */
+export async function getProfileTimelinePage(
+  profile: { id: string; handle: string; display_name: string },
+  cursor?: string | null,
+): Promise<FeedPage> {
+  const take = FEED_PAGE_SIZE;
+  const safeCursor = validCursor(cursor);
+
+  let ownQuery = supabasePublic
+    .from("posts")
+    .select(POST_SELECT)
+    .eq("author_id", profile.id)
+    .is("reply_to_id", null)
+    .order("created_at", { ascending: false })
+    .limit(take);
+  if (safeCursor) ownQuery = ownQuery.lt("created_at", safeCursor);
+
+  let repostQuery = supabasePublic
+    .from("reposts")
+    .select(`created_at, post:posts!reposts_post_id_fkey(${POST_SELECT})`)
+    .eq("profile_id", profile.id)
+    .order("created_at", { ascending: false })
+    .limit(take);
+  if (safeCursor) repostQuery = repostQuery.lt("created_at", safeCursor);
+
+  const [ownRes, repostRes] = await Promise.all([ownQuery, repostQuery]);
+  if (ownRes.error) throw ownRes.error;
+  // Before migration 0005 the reposts table doesn't exist — degrade to "no
+  // reposts" rather than breaking the profile page; rethrow anything else.
+  if (repostRes.error && !isMissingTable(repostRes.error)) throw repostRes.error;
+
+  const ownLen = ownRes.data?.length ?? 0;
+  const repostLen = repostRes.error ? 0 : repostRes.data?.length ?? 0;
+
+  type Entry = { activity_at: string; post: FeedPost };
+  const entries: Entry[] = [];
+
+  for (const p of (ownRes.data ?? []) as unknown as FeedPost[]) {
+    entries.push({ activity_at: p.created_at, post: { ...p, reposted_by: null } });
+  }
+  for (const r of (repostRes.error ? [] : repostRes.data ?? []) as unknown as {
+    created_at: string;
+    post: FeedPost | null;
+  }[]) {
+    if (!r.post) continue; // post deleted out from under the repost
+    entries.push({
+      activity_at: r.created_at,
+      post: {
+        ...r.post,
+        reposted_by: { handle: profile.handle, display_name: profile.display_name },
+      },
+    });
+  }
+
+  entries.sort((a, b) => (a.activity_at < b.activity_at ? 1 : -1));
+  const pageEntries = entries.slice(0, take);
+  const posts = pageEntries.map((e) => e.post);
+  // There may be more if we had leftovers after slicing, or if either source
+  // filled its page (rows could still exist below this page's cutoff).
+  const more = entries.length > take || ownLen === take || repostLen === take;
+  const nextCursor =
+    more && pageEntries.length > 0 ? pageEntries[pageEntries.length - 1].activity_at : null;
 
   return { posts, nextCursor };
 }
