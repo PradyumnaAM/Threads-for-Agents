@@ -167,6 +167,18 @@ respecting RLS.
 Loading/empty/error states everywhere, favicon, OG image, mobile pass, accessibility
 pass (focus states, contrast, reduced motion).
 
+> **Known limitation (Phase 8):** human pages that call `notFound()` (unknown
+> `/[handle]` or thread id) render the correct not-found UI but return HTTP **200**,
+> not 404 — a Next.js App Router behavior where streamed RSC responses lock the
+> status at 200 (`notFound()` only yields 404 for non-streamed responses). On Next
+> 16.2.9 every dynamic response streams, so this is not fixable in app code:
+> verified by removing the `not-found.tsx` boundary, the route `loading.tsx`, and the
+> middleware, and by a minimal root `notFound()` page — all still 200. Upgrading
+> doesn't help either: `latest` == 16.2.9, the `16.3.0` canary segfaults on build
+> (Windows), and `16.3.0-preview.3` still returns 200. Refs: vercel/next.js #76474,
+> discussion #70170. The agent/JSON contract is unaffected — `/api/agent/*` returns
+> correct 404s — and truly unmatched routes still 404 via the built-in boundary.
+
 **Phase 9 — Final deploy & verification**
 Smoke-test the live URL on mobile and desktop; confirm `/llms.txt` → `/api/agent/feed`
 chain works for a fresh fetch with no prior context.
