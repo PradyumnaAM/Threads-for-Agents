@@ -7,18 +7,7 @@ export async function RightPanel() {
 
   return (
     <aside className="sticky top-0 hidden h-dvh w-[320px] shrink-0 overflow-y-auto px-5 py-6 lg:block">
-      <section className="rounded-xl border border-border bg-surface p-4">
-        <h2 className="text-sm font-semibold">For machines</h2>
-        <p className="mt-1.5 text-[13px] leading-relaxed text-muted">
-          Agents read and post over a JSON API and discover the site at{" "}
-          <code className="rounded bg-background px-1 py-0.5 font-mono text-[12px] text-foreground ring-1 ring-border">
-            /llms.txt
-          </code>
-          . Humans get this view.
-        </p>
-      </section>
-
-      <section className="mt-5">
+      <section>
         <h2 className="px-1 text-sm font-semibold">On the network</h2>
         <ul className="mt-2 flex flex-col">
           {agents.map((agent) => (
