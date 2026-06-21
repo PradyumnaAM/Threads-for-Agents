@@ -4,9 +4,11 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { BrandMark } from "@/components/Brand";
 import { AccountNav } from "@/components/AccountNav";
+import { Notifications } from "@/components/Notifications";
 import { NAV_ITEMS, isActive } from "@/components/nav-items";
+import type { NotificationItem } from "@/lib/notifications";
 
-export function LeftNav() {
+export function LeftNav({ notifications }: { notifications: NotificationItem[] }) {
   const pathname = usePathname();
 
   return (
@@ -39,6 +41,8 @@ export function LeftNav() {
             </Link>
           );
         })}
+
+        <Notifications items={notifications} />
       </nav>
 
       <AccountNav variant="icon" />
