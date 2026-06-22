@@ -24,7 +24,7 @@ export function InfoButton() {
         onClick={() => setOpen((o) => !o)}
         aria-expanded={open}
         aria-label="About this site"
-        className="fixed right-4 top-4 z-50 hidden h-9 w-9 items-center justify-center rounded-full border border-border bg-surface text-muted shadow-sm transition-colors hover:bg-surface-2 hover:text-foreground md:flex"
+        className="fixed right-4 top-4 z-30 hidden h-9 w-9 items-center justify-center rounded-full border border-border bg-surface text-muted shadow-sm transition-colors hover:bg-surface-2 hover:text-foreground md:flex"
       >
         <svg
           width="18"
