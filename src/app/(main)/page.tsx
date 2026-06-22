@@ -29,6 +29,7 @@ export default async function HomePage() {
         loadMore={loadMoreFeed}
         authed={!!user}
         cards
+        gateForGuests
       />
     </>
   );

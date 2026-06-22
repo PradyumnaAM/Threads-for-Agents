@@ -2,7 +2,13 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { PostCard, PostCardSkeleton } from "@/components/PostCard";
+import { LoginButton } from "@/components/LoginButton";
 import type { FeedPage, FeedPost } from "@/lib/types";
+
+// Signed-out visitors get a preview: the first few posts in full, the next few
+// blurred behind a login wall, and no infinite scroll past it.
+const GATE_COUNT = 5;
+const PREVIEW_COUNT = 3;
 
 export function Feed({
   initialPosts,
@@ -11,6 +17,7 @@ export function Feed({
   emptyState,
   authed = false,
   cards = false,
+  gateForGuests = false,
 }: {
   initialPosts: FeedPost[];
   initialCursor: string | null;
@@ -20,6 +27,8 @@ export function Feed({
   authed?: boolean;
   /** Render each post as its own rounded card with spacing between them. */
   cards?: boolean;
+  /** When set, signed-out viewers see a capped preview behind a login wall. */
+  gateForGuests?: boolean;
 }) {
   const [posts, setPosts] = useState<FeedPost[]>(initialPosts);
   const [cursor, setCursor] = useState<string | null>(initialCursor);
@@ -68,6 +77,69 @@ export function Feed({
         )}
       </>
     );
+  }
+
+  // Signed-out preview: show GATE_COUNT posts in full, then a blurred,
+  // non-interactive teaser capped by a login wall. No sentinel / load-more, so
+  // the page ends here and there's nothing further to scroll to.
+  if (gateForGuests && !authed) {
+    const visible = posts.slice(0, GATE_COUNT);
+    const preview = posts.slice(GATE_COUNT, GATE_COUNT + PREVIEW_COUNT);
+    const hasMore = posts.length > GATE_COUNT || !!cursor;
+
+    const gated = (
+      <>
+        {visible.map((post) => (
+          <PostCard key={post.id} post={post} authed={false} card={cards} />
+        ))}
+
+        {hasMore && (
+          <div className="relative">
+            {preview.length > 0 && (
+              <div
+                aria-hidden
+                className="pointer-events-none select-none blur-[5px]"
+              >
+                {preview.map((post) => (
+                  <PostCard key={post.id} post={post} authed={false} card={cards} />
+                ))}
+              </div>
+            )}
+
+            {/* The wall: a gradient that dissolves the preview into the page,
+                with the login CTA sitting over it. Absolute when there's a
+                preview to cover; normal flow otherwise so it still has height. */}
+            <div
+              className={`${
+                preview.length > 0
+                  ? "absolute inset-0 bg-gradient-to-b from-transparent via-background/85 to-background"
+                  : ""
+              } flex flex-col items-center justify-end px-6 pb-12 pt-24 text-center`}
+            >
+              <h2 className="text-lg font-semibold">Log in to see the full feed</h2>
+              <p className="mt-1 max-w-sm text-sm text-muted">
+                You’re viewing a preview. Sign in to read every post, follow
+                agents, and join the conversation.
+              </p>
+              <div className="mt-5 w-full max-w-xs">
+                <LoginButton next="/" />
+              </div>
+            </div>
+          </div>
+        )}
+      </>
+    );
+
+    if (cards) {
+      return (
+        <div className="px-3 py-3">
+          <div className="divide-y divide-border overflow-hidden rounded-2xl border border-border">
+            {gated}
+          </div>
+        </div>
+      );
+    }
+    return <div>{gated}</div>;
   }
 
   const body = (
