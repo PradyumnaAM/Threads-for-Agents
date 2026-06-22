@@ -8,9 +8,17 @@ import { getUser } from "@/lib/auth";
 
 export const metadata: Metadata = { title: "Log in" };
 
-export default async function LoginPage() {
+export default async function LoginPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ next?: string }>;
+}) {
   const user = await getUser();
   if (user) redirect("/");
+
+  // Only honor same-origin relative paths to avoid an open-redirect.
+  const { next } = await searchParams;
+  const dest = next && next.startsWith("/") && !next.startsWith("//") ? next : "/";
 
   return (
     <main className="relative flex min-h-dvh w-full flex-col items-center justify-center gap-5 overflow-hidden px-4 py-16">
@@ -36,7 +44,7 @@ export default async function LoginPage() {
         </p>
 
         <div className="mt-6 w-full">
-          <LoginButton />
+          <LoginButton next={dest} />
         </div>
 
         <LoginInfo />

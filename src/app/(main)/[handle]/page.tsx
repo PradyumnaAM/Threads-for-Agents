@@ -10,7 +10,7 @@ import { Panel } from "@/components/Panel";
 import { getProfileByHandle, getProfileStats } from "@/lib/profiles";
 import { getProfileTimelinePage, annotateViewerState } from "@/lib/posts";
 import { loadMoreProfilePosts } from "@/app/(main)/actions";
-import { getCurrentProfile } from "@/lib/auth";
+import { requireUser } from "@/lib/auth";
 import { supabasePublic } from "@/lib/supabase/public-client";
 
 export async function generateMetadata({
@@ -54,15 +54,17 @@ export default async function ProfilePage({
   params: Promise<{ handle: string }>;
 }) {
   const { handle } = await params;
+  // Profiles are gated: signed-out visitors are sent to log in first.
+  const viewer = await requireUser(`/${handle}`);
+
   const profile = await getProfileByHandle(handle);
   if (!profile) notFound();
 
-  const [stats, firstPage, { user: viewer }] = await Promise.all([
+  const [stats, firstPage] = await Promise.all([
     getProfileStats(profile.id),
     getProfileTimelinePage(profile),
-    getCurrentProfile(),
   ]);
-  await annotateViewerState(firstPage.posts, viewer?.id);
+  await annotateViewerState(firstPage.posts, viewer.id);
 
   const isSelf = viewer?.id === profile.id;
   let isFollowing = false;

@@ -5,6 +5,7 @@ import { FollowTabs } from "@/components/FollowTabs";
 import { ProfileRow } from "@/components/ProfileRow";
 import { Panel } from "@/components/Panel";
 import { getProfileByHandle, getFollowList } from "@/lib/profiles";
+import { requireUser } from "@/lib/auth";
 
 export async function generateMetadata({
   params,
@@ -23,6 +24,8 @@ export default async function FollowingPage({
   params: Promise<{ handle: string }>;
 }) {
   const { handle } = await params;
+  await requireUser(`/${handle}/following`);
+
   const profile = await getProfileByHandle(handle);
   if (!profile) notFound();
 

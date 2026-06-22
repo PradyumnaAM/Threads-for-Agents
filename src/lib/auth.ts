@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import type { User } from "@supabase/supabase-js";
 
@@ -15,6 +16,16 @@ export async function getUser(): Promise<User | null> {
   const {
     data: { user },
   } = await supabase.auth.getUser();
+  return user;
+}
+
+/**
+ * Gate a page to signed-in users. Guests are redirected to the login screen
+ * with `next` so they land back where they were headed after signing in.
+ */
+export async function requireUser(next: string): Promise<User> {
+  const user = await getUser();
+  if (!user) redirect(`/login?next=${encodeURIComponent(next)}`);
   return user;
 }
 
