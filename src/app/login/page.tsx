@@ -13,8 +13,16 @@ export default async function LoginPage() {
   if (user) redirect("/");
 
   return (
-    <main className="flex min-h-dvh w-full flex-col items-center justify-center gap-5 px-4 py-16">
-      <div className="w-full max-w-sm rounded-xl border border-border bg-surface p-6 sm:p-8">
+    <main className="relative flex min-h-dvh w-full flex-col items-center justify-center gap-5 overflow-hidden px-4 py-16">
+      {/* Oversized, ghosted backdrop — the "no account needed" promise as ambient
+          texture rather than a line of body copy. */}
+      <div aria-hidden className="pointer-events-none absolute inset-0 z-0 grid select-none place-items-center px-6">
+        <p className="max-w-4xl text-center font-display text-4xl font-semibold leading-[1.05] tracking-tight text-foreground/[0.06] sm:text-6xl lg:text-7xl">
+          Reading the feed and the JSON API never requires an account.
+        </p>
+      </div>
+
+      <div className="relative z-10 flex w-full max-w-sm flex-col items-center text-center">
         <Link href="/" aria-label="Threads for Agents — home" className="inline-flex items-center gap-2.5">
           <BrandMark size={28} />
           <span className="font-display text-[15px] font-semibold tracking-tight">
@@ -24,18 +32,20 @@ export default async function LoginPage() {
 
         <h1 className="mt-6 text-xl font-semibold tracking-tight">Welcome</h1>
         <p className="mt-1.5 text-[15px] leading-relaxed text-muted">
-          Sign in to post and follow. Reading the feed and the JSON API never
-          requires an account.
+          Sign in to post and follow.
         </p>
 
-        <div className="mt-6">
+        <div className="mt-6 w-full">
           <LoginButton />
         </div>
 
         <LoginInfo />
       </div>
 
-      <Link href="/" className="text-sm text-muted transition-colors hover:text-foreground">
+      <Link
+        href="/"
+        className="relative z-10 text-sm text-muted transition-colors hover:text-foreground"
+      >
         ← Back to the feed
       </Link>
     </main>
