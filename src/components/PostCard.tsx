@@ -4,29 +4,43 @@ import { Avatar } from "@/components/Avatar";
 import { RelativeTime, AbsoluteTime } from "@/components/RelativeTime";
 import { RepostIcon } from "@/components/icons";
 import { PostActions } from "@/components/PostActions";
+import { PostArticle } from "@/components/PostArticle";
+import { PostLikeProvider, LikeBurst } from "@/components/PostLike";
 import type { FeedPost } from "@/lib/types";
 
 export function PostCard({
   post,
   featured = false,
   authed = false,
+  card = false,
 }: {
   post: FeedPost;
   featured?: boolean;
   authed?: boolean;
+  /** Render as a standalone rounded card instead of a divider-separated row. */
+  card?: boolean;
 }) {
   const a = post.author;
   const profileHref = `/${a.handle}`;
   const threadHref = `/${a.handle}/post/${post.id}`;
   const repostedBy = post.reposted_by;
 
-  return (
-    <article
-      className={`border-b border-border px-4 py-4 sm:px-5 ${
+  const articleClass = card
+    ? "relative px-4 py-4 transition-colors hover:bg-surface sm:px-5"
+    : `relative border-b border-border px-4 py-4 sm:px-5 ${
         featured ? "" : "transition-colors hover:bg-surface"
-      }`}
+      }`;
+
+  return (
+    <PostLikeProvider
+      postId={post.id}
+      initialLiked={post.viewer_liked ?? false}
+      initialLikes={post.like_count}
+      authed={authed}
     >
-      {repostedBy && (
+      <PostArticle className={articleClass}>
+        <LikeBurst />
+        {repostedBy && (
         <div className="mb-1.5 flex items-center gap-2 pl-[3.25rem] text-[13px] font-medium text-muted">
           <RepostIcon width={14} height={14} className="text-green-500" />
           <Link href={`/${repostedBy.handle}`} className="hover:underline">
@@ -118,10 +132,8 @@ export function PostCard({
               <PostActions
                 postId={post.id}
                 threadHref={threadHref}
-                likeCount={post.like_count}
                 replyCount={post.reply_count}
                 repostCount={post.repost_count}
-                liked={post.viewer_liked}
                 reposted={post.viewer_reposted}
                 authed={authed}
               />
@@ -130,23 +142,28 @@ export function PostCard({
             <PostActions
               postId={post.id}
               threadHref={threadHref}
-              likeCount={post.like_count}
               replyCount={post.reply_count}
               repostCount={post.repost_count}
-              liked={post.viewer_liked}
               reposted={post.viewer_reposted}
               authed={authed}
             />
           )}
+          </div>
         </div>
-      </div>
-    </article>
+      </PostArticle>
+    </PostLikeProvider>
   );
 }
 
-export function PostCardSkeleton() {
+export function PostCardSkeleton({ card = false }: { card?: boolean }) {
   return (
-    <div className="flex items-start gap-3 border-b border-border px-4 py-4 sm:px-5">
+    <div
+      className={
+        card
+          ? "flex items-start gap-3 px-4 py-4 sm:px-5"
+          : "flex items-start gap-3 border-b border-border px-4 py-4 sm:px-5"
+      }
+    >
       <div className="h-11 w-11 shrink-0 animate-pulse rounded-full bg-border" />
       <div className="flex-1 space-y-2.5 py-1">
         <div className="h-3.5 w-40 animate-pulse rounded bg-border" />

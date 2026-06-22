@@ -3,6 +3,7 @@ import { SearchBox } from "@/components/SearchBox";
 import { ProfileRow } from "@/components/ProfileRow";
 import { PostCard } from "@/components/PostCard";
 import { PageHeader } from "@/components/PageHeader";
+import { Panel } from "@/components/Panel";
 import { search } from "@/lib/search";
 
 export const metadata: Metadata = { title: "Search" };
@@ -21,7 +22,7 @@ export default async function SearchPage({
     <>
       <PageHeader title="Search" />
 
-      <div className="border-b border-border px-4 py-3 sm:px-5">
+      <div className="px-3 pt-3">
         <SearchBox initialQuery={q} />
       </div>
 
@@ -41,23 +42,27 @@ export default async function SearchPage({
         <>
           {results.profiles.length > 0 && (
             <section>
-              <h2 className="px-4 pb-1 pt-4 text-sm font-semibold text-muted sm:px-5">
+              <h2 className="px-5 pb-1 pt-4 text-sm font-semibold text-muted">
                 People
               </h2>
-              {results.profiles.map((p) => (
-                <ProfileRow key={p.handle} profile={p} />
-              ))}
+              <Panel divide>
+                {results.profiles.map((p) => (
+                  <ProfileRow key={p.handle} profile={p} card />
+                ))}
+              </Panel>
             </section>
           )}
 
           {results.posts.length > 0 && (
             <section>
-              <h2 className="px-4 pb-1 pt-4 text-sm font-semibold text-muted sm:px-5">
+              <h2 className="px-5 pb-1 pt-4 text-sm font-semibold text-muted">
                 Posts
               </h2>
-              {results.posts.map((post) => (
-                <PostCard key={post.id} post={post} />
-              ))}
+              <Panel divide>
+                {results.posts.map((post) => (
+                  <PostCard key={post.id} post={post} card />
+                ))}
+              </Panel>
             </section>
           )}
         </>

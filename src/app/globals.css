@@ -106,6 +106,21 @@ select:focus-visible,
   animation: like-pop 0.32s ease-out;
 }
 
+/* Instagram-style heart that pops up in the center of a post on double-tap,
+ * then fades away. Reduced-motion users get a near-instant, non-distracting
+ * version via the media query above. */
+@keyframes like-burst {
+  0% { opacity: 0; transform: scale(0.4); }
+  15% { opacity: 0.95; transform: scale(1.15); }
+  35% { transform: scale(0.92); }
+  50% { opacity: 0.95; transform: scale(1); }
+  80% { opacity: 0.9; }
+  100% { opacity: 0; transform: scale(1.05); }
+}
+.like-burst {
+  animation: like-burst 0.85s ease-out forwards;
+}
+
 /* JSON syntax colors for the "View as agent" panel — calm, restrained. */
 .json-panel {
   white-space: pre;

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { Avatar } from "@/components/Avatar";
@@ -5,6 +6,7 @@ import { AgentTypeBadge } from "@/components/AgentTypeBadge";
 import { FollowButton } from "@/components/FollowButton";
 import { Feed } from "@/components/Feed";
 import { PageHeader } from "@/components/PageHeader";
+import { Panel } from "@/components/Panel";
 import { getProfileByHandle, getProfileStats } from "@/lib/profiles";
 import { getProfileTimelinePage, annotateViewerState } from "@/lib/posts";
 import { loadMoreProfilePosts } from "@/app/(main)/actions";
@@ -28,14 +30,21 @@ export async function generateMetadata({
   };
 }
 
-function Stat({ value, label }: { value: number; label: string }) {
-  return (
-    <span className="text-muted">
+function Stat({ value, label, href }: { value: number; label: string; href?: string }) {
+  const inner = (
+    <>
       <span className="font-semibold text-foreground tabular-nums">
         {value.toLocaleString()}
       </span>{" "}
       {label}
-    </span>
+    </>
+  );
+  return href ? (
+    <Link href={href} className="text-muted transition-colors hover:text-foreground hover:underline">
+      {inner}
+    </Link>
+  ) : (
+    <span className="text-muted">{inner}</span>
   );
 }
 
@@ -76,7 +85,8 @@ export default async function ProfilePage({
     <>
       <PageHeader title={profile.display_name} subtitle={`${stats.posts} posts`} back />
 
-      <section className="border-b border-border px-4 py-5 sm:px-5">
+      <Panel>
+      <section className="px-4 py-5 sm:px-5">
         <div className="flex items-start justify-between gap-4">
           <Avatar src={profile.avatar_url} name={profile.display_name} size={72} />
           {isSelf ? (
@@ -122,16 +132,18 @@ export default async function ProfilePage({
         </div>
 
         <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-sm">
-          <Stat value={stats.following} label="following" />
-          <Stat value={stats.followers} label="followers" />
+          <Stat value={stats.following} label="following" href={`/${profile.handle}/following`} />
+          <Stat value={stats.followers} label="followers" href={`/${profile.handle}/followers`} />
           <Stat value={stats.posts} label="posts" />
         </div>
       </section>
+      </Panel>
 
       <Feed
         initialPosts={firstPage.posts}
         initialCursor={firstPage.nextCursor}
         authed={!!viewer}
+        cards
         loadMore={loadMoreProfilePosts.bind(null, {
           id: profile.id,
           handle: profile.handle,

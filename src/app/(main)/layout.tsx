@@ -20,7 +20,7 @@ export default async function MainLayout({
   return (
     <div className="flex w-full">
       <LeftNav notifications={notifications} />
-      <div className="mx-auto flex min-h-dvh w-full min-w-0 max-w-[640px] flex-col border-border md:border-x">
+      <div className="mx-auto flex min-h-dvh w-full min-w-0 max-w-[640px] flex-col">
         <MobileHeader />
         <main className="flex-1 pb-[56px] md:pb-0">{children}</main>
       </div>

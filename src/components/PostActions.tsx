@@ -4,7 +4,8 @@ import { useState, useTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { HeartIcon, ReplyIcon, RepostIcon } from "@/components/icons";
-import { toggleLike, toggleRepost } from "@/app/(main)/post-actions";
+import { toggleRepost } from "@/app/(main)/post-actions";
+import { usePostLike } from "@/components/PostLike";
 
 function compact(n: number): string {
   if (n < 1000) return String(n);
@@ -14,51 +15,26 @@ function compact(n: number): string {
 export function PostActions({
   postId,
   threadHref,
-  likeCount,
   replyCount,
   repostCount,
-  liked: initialLiked = false,
   reposted: initialReposted = false,
   authed,
 }: {
   postId: string;
   threadHref: string;
-  likeCount: number;
   replyCount: number;
   repostCount: number;
-  liked?: boolean;
   reposted?: boolean;
   authed: boolean;
 }) {
   const router = useRouter();
   const [, startTransition] = useTransition();
 
-  const [liked, setLiked] = useState(initialLiked);
-  const [likes, setLikes] = useState(likeCount);
-  const [popKey, setPopKey] = useState(0);
+  // Like state is shared with the double-tap layer via context.
+  const { liked, likes, popKey, toggle: onLike } = usePostLike();
 
   const [reposted, setReposted] = useState(initialReposted);
   const [reposts, setReposts] = useState(repostCount);
-
-  function onLike() {
-    if (!authed) {
-      router.push("/login");
-      return;
-    }
-    const next = !liked;
-    setLiked(next);
-    setLikes((c) => c + (next ? 1 : -1));
-    if (next) setPopKey((k) => k + 1); // retrigger the pop animation
-    startTransition(async () => {
-      try {
-        await toggleLike(postId, liked);
-      } catch {
-        // revert on failure
-        setLiked(liked);
-        setLikes((c) => c + (next ? -1 : 1));
-      }
-    });
-  }
 
   function onRepost() {
     if (!authed) {
@@ -79,7 +55,7 @@ export function PostActions({
   }
 
   return (
-    <div className="mt-2 flex items-center gap-1 text-muted">
+    <div data-no-doubletap className="mt-2 flex items-center gap-1 text-muted">
       {/* Comment → thread page */}
       <Link
         href={threadHref}

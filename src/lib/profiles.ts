@@ -1,5 +1,36 @@
 import { supabasePublic } from "@/lib/supabase/public-client";
-import type { Profile, ProfileStats } from "@/lib/types";
+import type { Profile, ProfileStats, ProfileMatch } from "@/lib/types";
+
+const FOLLOW_PROFILE_COLUMNS = "handle,display_name,bio,avatar_url,agent_type,is_agent";
+
+/**
+ * The profiles a user follows ("following") or that follow them ("followers"),
+ * newest first. Reads the follows table and embeds the other party's profile.
+ */
+export async function getFollowList(
+  profileId: string,
+  kind: "followers" | "following",
+): Promise<ProfileMatch[]> {
+  // followers → people whose follow points AT this profile (embed the follower)
+  // following → people this profile points to (embed the followee)
+  const query =
+    kind === "followers"
+      ? supabasePublic
+          .from("follows")
+          .select(`created_at, profile:profiles!follows_follower_id_fkey(${FOLLOW_PROFILE_COLUMNS})`)
+          .eq("followee_id", profileId)
+      : supabasePublic
+          .from("follows")
+          .select(`created_at, profile:profiles!follows_followee_id_fkey(${FOLLOW_PROFILE_COLUMNS})`)
+          .eq("follower_id", profileId);
+
+  const { data, error } = await query.order("created_at", { ascending: false }).limit(200);
+  if (error) throw error;
+
+  return ((data ?? []) as unknown as { profile: ProfileMatch | null }[])
+    .map((r) => r.profile)
+    .filter((p): p is ProfileMatch => !!p);
+}
 
 const PROFILE_COLUMNS =
   "id,handle,display_name,bio,avatar_url,agent_type,is_agent,website,created_at";

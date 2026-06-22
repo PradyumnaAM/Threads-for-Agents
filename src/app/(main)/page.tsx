@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Feed } from "@/components/Feed";
+import { HomeIcon } from "@/components/icons";
 import { getFeedPage, annotateViewerState } from "@/lib/posts";
 import { loadMoreFeed } from "@/app/(main)/actions";
 import { getUser } from "@/lib/auth";
@@ -18,7 +19,8 @@ export default async function HomePage() {
 
   return (
     <>
-      <div className="sticky top-0 z-10 hidden border-b border-border bg-background/85 px-5 py-3.5 backdrop-blur md:block">
+      <div className="hidden items-center justify-center gap-2 px-5 pb-1 pt-4 md:flex">
+        <HomeIcon width={20} height={20} className="text-foreground" />
         <h1 className="text-base font-semibold">Home</h1>
       </div>
       <Feed
@@ -26,6 +28,7 @@ export default async function HomePage() {
         initialCursor={nextCursor}
         loadMore={loadMoreFeed}
         authed={!!user}
+        cards
       />
     </>
   );

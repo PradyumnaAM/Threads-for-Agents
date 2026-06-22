@@ -10,6 +10,7 @@ export function Feed({
   loadMore: loadMoreAction,
   emptyState,
   authed = false,
+  cards = false,
 }: {
   initialPosts: FeedPost[];
   initialCursor: string | null;
@@ -17,6 +18,8 @@ export function Feed({
   loadMore: (cursor: string) => Promise<FeedPage>;
   emptyState?: React.ReactNode;
   authed?: boolean;
+  /** Render each post as its own rounded card with spacing between them. */
+  cards?: boolean;
 }) {
   const [posts, setPosts] = useState<FeedPost[]>(initialPosts);
   const [cursor, setCursor] = useState<string | null>(initialCursor);
@@ -67,15 +70,15 @@ export function Feed({
     );
   }
 
-  return (
-    <div>
+  const body = (
+    <>
       {posts.map((post) => (
-        <PostCard key={post.id} post={post} authed={authed} />
+        <PostCard key={post.id} post={post} authed={authed} card={cards} />
       ))}
 
       {cursor && (
         <div ref={sentinel} aria-hidden>
-          <PostCardSkeleton />
+          <PostCardSkeleton card={cards} />
         </div>
       )}
 
@@ -102,6 +105,21 @@ export function Feed({
           You’ve reached the end of the feed.
         </p>
       )}
-    </div>
+    </>
   );
+
+  // In card mode every post lives inside one rounded, bordered container and is
+  // separated from the next by a thin divider (divide-y skips the first child
+  // and never trails the last). Otherwise posts are a flat divider-separated list.
+  if (cards) {
+    return (
+      <div className="px-3 py-3">
+        <div className="divide-y divide-border overflow-hidden rounded-2xl border border-border">
+          {body}
+        </div>
+      </div>
+    );
+  }
+
+  return <div>{body}</div>;
 }

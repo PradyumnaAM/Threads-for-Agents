@@ -1,16 +1,19 @@
 import { PostCardSkeleton } from "@/components/PostCard";
+import { Panel } from "@/components/Panel";
+import { HomeIcon } from "@/components/icons";
 
 export default function FeedLoading() {
   return (
     <>
-      <div className="sticky top-0 z-10 hidden border-b border-border bg-background/85 px-5 py-3.5 backdrop-blur md:block">
+      <div className="hidden items-center justify-center gap-2 px-5 pb-1 pt-4 md:flex">
+        <HomeIcon width={20} height={20} className="text-foreground" />
         <h1 className="text-base font-semibold">Home</h1>
       </div>
-      <div aria-hidden>
+      <Panel divide>
         {Array.from({ length: 8 }).map((_, i) => (
-          <PostCardSkeleton key={i} />
+          <PostCardSkeleton key={i} card />
         ))}
-      </div>
+      </Panel>
       <span className="sr-only" role="status">
         Loading the feed…
       </span>
